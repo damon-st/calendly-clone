@@ -1,33 +1,204 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind components;
+  @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
+
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 222.2 84% 4.9%;
+
+      --radius: 0.5rem;
+    }
+
+    .dark {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
+
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 212.7 26.8% 83.9%;
+    }
+  }
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }
+
+html,body,:root{
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@font-face {
+  font-family: girloyLight;
+  src: url(/fonts/Gilroy-Light.ttf);
+}
+@font-face {
+  font-family: girloyBold;
+  src: url(/fonts/Gilroy-Bold.ttf);
+}
+@font-face {
+  font-family: girloyRegular;
+  src: url(/fonts/Gilroy-Regular.ttf);
+}
+@font-face {
+  font-family: girloySemiBold;
+  src: url(/fonts/Gilroy-SemiBold.ttf);
+}
+.lineRL{
+  width: 100%;
+  position: relative;
+}
+
+.lineRL::before,.lineRL::after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  width: calc(100% + 300px);
+  background: rgb(229, 229, 229);
+  z-index: -1;
+}
+.lineRL::before{
+  left: 100%;
+}
+.lineRL::after{
+  right: 100%;
+}
+
+.bgSection1 {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  background-image: url("/hero-bkg-half-no-margin.png");
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.imgFilterBlack{
+  filter: brightness(0) saturate(100%) invert(15%) sepia(93%) saturate(750%) hue-rotate(174deg) brightness(97%) contrast(98%);
+}
+
+.animTralst{
+  animation: animT  10s infinite linear;
+}
+
+@keyframes animT {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.iconInte {
+    display: flex;
+    aspect-ratio: 1 / 1;
+    box-shadow: rgba(71, 103, 136, 0.04) 0px 4px 4.5px 0px, rgba(71, 103, 136, 0.03) 0px 8px 15px 0px, rgba(71, 103, 136, 0.06) 0px 15px 30px 0px;
+    border: 1px solid rgb(212, 224, 237);
+    background-color: rgb(255, 255, 255);
+    border-radius: 12px;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    transition: all 0.2s ease-in-out 0s;
+    transform: scale(1);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.iconInte:hover{
+  transform: scale(1.125);
+    border: 1px solid rgb(0, 107, 255);
+    background-color: rgb(244, 248, 255);
+}
+
+.btnBus{
+    cursor: pointer;
+    display: inline-flex;
+    width: 100%;
+    max-width: 180px;
+    flex: 1 0 140px;
+    padding: 22px;
+    border-radius: 10px;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    border: 1.5px solid rgb(212, 224, 237);
+    background-color: rgb(255, 255, 255);
+}
+
+.btnBus:active {
+  cursor: pointer;
+  display: inline-flex;
+  width: 100%;
+  max-width: 180px;
+  flex: 1 0 140px;
+  padding: 22px;
+  border-radius: 10px;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  border: 1.5px solid rgb(0, 107, 255);
+  box-shadow: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px, rgba(71, 103, 136, 0.03) 0px 8px 15px 0px, rgba(71, 103, 136, 0.06) 0px 15px 30px 0px;
+  background-color: #f4f8ff;
 }
