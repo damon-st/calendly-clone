@@ -29,3 +29,6 @@ export type TypeSectionFourInfoBusin = {
     description: string;
   }>;
 };
+
+export type TypeIntroInfo = { title: string; value: string; imgUrl: string };
+export type TypeResultAction = { message: string; success: boolean };

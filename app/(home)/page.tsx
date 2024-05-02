@@ -1,4 +1,3 @@
-import Footer from "@/components/global/Footer";
 import Banner1 from "./_components/Banner1";
 import NavbarHome from "./_components/Navbar";
 import Section1 from "./_components/Section1";
@@ -9,15 +8,13 @@ import Section5 from "./_components/Section5";
 
 export default function Home() {
   return (
-    <main className="w-full h-full">
-      <NavbarHome />
+    <>
       <Section1 />
       <Section2 />
       <Section3 />
       <Section4 />
       <Section5 />
       <Banner1 />
-      <Footer />
-    </main>
+    </>
   );
 }

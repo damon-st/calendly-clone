@@ -5,6 +5,7 @@ import {
   Globe,
   Instagram,
   Linkedin,
+  LucideArrowUpRight,
   Twitter,
   Youtube,
 } from "lucide-react";
@@ -152,7 +153,7 @@ const contacts: Array<LinksT> = [
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <footer className="w-full flex flex-col items-center justify-center">
       <div className="w-full max-w-[1200px] pt-24 pb-24 flex flex-col items-center justify-center">
         <div className="flex flex-col md:flex-row items-center justify-between w-full pb-6">
           <div className="w-full md:w-[40%] flex flex-col">
@@ -167,7 +168,11 @@ export default function Footer() {
           </div>
           <div className="w-full md:w-[60%] flex items-center justify-center">
             <div className="w-full max-w-2xl rounded-lg flex flex-col">
-              <div className="btnInfoCale  flex-col">
+              <div className="btnInfoCale  flex-col relative group">
+                <LucideArrowUpRight
+                  className="transition-transform duration-300 text-colorText absolute top-6 right-9 group-hover:translate-x-2 group-hover:-translate-y-2"
+                  size={30}
+                />
                 <div className="bg-[#E6F0FF] px-3 py-1 rounded-lg w-fit text-[#004EBA] font-girloyRegular text-sm font-bold">
                   DESTACADO
                 </div>
@@ -407,15 +412,15 @@ export default function Footer() {
                 >
                   <path
                     fill="#fff"
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7c0 3.2 2.6 5.8 5.8 5.8Z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                   <path
                     fill="#06F"
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7Zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8Z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                   <path
                     fill="#fff"
@@ -454,6 +459,6 @@ export default function Footer() {
           </span>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

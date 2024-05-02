@@ -65,6 +65,9 @@ const config = {
         colorTextO: "#476788",
         colorCeleste: "#E6F0FF",
         colorTextAzulOther: "#004EBA",
+        colorGrisDash: "#fafafa",
+        colorTextBlack: "#1A1A1A",
+        colorTextGris: "#1A1A1A9C",
       },
       borderRadius: {
         lg: "var(--radius)",
