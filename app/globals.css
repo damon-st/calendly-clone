@@ -202,3 +202,64 @@ html,body,:root{
   box-shadow: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px, rgba(71, 103, 136, 0.03) 0px 8px 15px 0px, rgba(71, 103, 136, 0.06) 0px 15px 30px 0px;
   background-color: #f4f8ff;
 }
+
+.btnSigupFooter{
+    cursor: pointer;
+    transition: all 0.2s linear 0s, background-position 1ms ease 0s, background-size 1ms ease 0s;
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(0, 107, 255);
+    background-color: rgb(0, 107, 255);
+    padding: 10px 18px;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    position: relative;
+    height: fit-content;
+    flex-direction: row;
+    display: inline-flex;
+    opacity: 1;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-family: girloyBold;
+}
+
+.btnRequestDemo {
+  cursor: pointer;
+  transition: all 0.2s linear 0s, background-position 1ms ease 0s, background-size 1ms ease 0s;
+  color: rgb(255, 255, 255);
+  border: 1px solid rgb(255, 255, 255);
+  background-color: transparent;
+  padding: 10px 18px;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  position: relative;
+  height: fit-content;
+  flex-direction: row;
+  display: inline-flex;
+  opacity: 1;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  text-align: center;
+  font-family: girloyBold;
+  font-weight: 600;
+}
+
+.btnInfoCale {
+  height: 100%;
+  flex-direction: column;
+  padding: 32px;
+  border-radius: 24px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(212, 224, 237);
+  box-shadow: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px, rgba(71, 103, 136, 0.03) 0px 8px 15px 0px, rgba(71, 103, 136, 0.06) 0px 15px 30px 0px;
+  gap: 12px;
+}
