@@ -307,3 +307,30 @@ html,body,:root{
     border: 1px solid var(--color-grey-3,#CCCCCC);
     border-radius: 8px;
 }
+
+.sidebarLinks2 {
+  padding: 8px 8px 4px;
+}
+
+.scheduleItem{
+  overflow: hidden;
+  max-width: 210px;
+  padding: 9px 12px 7px;
+  border: solid 1px var(--color-grey-3,#CCCCCC);
+  border-radius: 8px;
+  background-color: var(--color-bg-white-l-1,rgba(255,255,255,1));
+  color: var(--text-color-level2,#1a1a1a9c);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.containerSchedule {
+    width: 100%;
+    border-top: 1px solid var(--color-grey-3,#CCCCCC);
+    border-bottom: 1px solid var(--color-grey-3,#CCCCCC);
+    background-color: var(--color-bg-white-l-1,rgba(255,255,255,1));
+    box-shadow: 0 1px 5px rgb(0 74 116/15%);
+    border: 1px solid var(--color-grey-3,#CCCCCC);
+    border-radius: 16px;
+}

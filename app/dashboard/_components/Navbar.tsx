@@ -49,8 +49,7 @@ export default function Navbar({ user }: Props) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="gap-6 outline-none min-w-[280px] "
-            side="top"
-            sideOffset={10}
+            side="right"
           >
             <DropdownMenuLabel>
               <div className="w-full flex flex-col">

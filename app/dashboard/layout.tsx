@@ -23,9 +23,10 @@ export default async function DashboardLayout({ children }: Props) {
   return (
     <main className="size-full bg-colorGrisDash flex">
       <Sidebar />
-      <section className="w-full flex flex-col flex-1 transition-all duration-500">
+
+      <section className="w-full flex flex-col flex-1 transition-all duration-500 ">
         <Navbar user={user} />
-        <section className="w-full flex items-start justify-center flex-col max-w-[1264px] px-8">
+        <section className="w-full flex items-start justify-center flex-col max-w-[1264px] px-8 overflow-auto">
           {children}
         </section>
       </section>

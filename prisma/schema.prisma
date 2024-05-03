@@ -19,7 +19,7 @@ model User {
 
   userId   String  @unique
   name     String?
-  email    String?
+  email    String  @unique
   imageUrl String?
 
   introInfoId String?
@@ -43,4 +43,61 @@ model IntroInfo {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ScheduleM {
+  id String @id @default(uuid()) @map("_id")
+
+  userId      String
+  title       String
+  timeZone    String
+  countryCode String
+  countryName String
+
+  scheduleWeekDays ScheduleWeekdDays[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ScheduleWeekdDays {
+  id String @id @default(uuid()) @map("_id")
+
+  weekDay    Int
+  weekDayStr String
+  active     Boolean @default(true)
+
+  scheduleHours ScheduleHoursM[]
+
+  scheduleId String
+  schedule   ScheduleM @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([scheduleId])
+}
+
+model ScheduleHoursM {
+  id String @id @default(uuid()) @map("_id")
+
+  hourInit    Int
+  hourInitStr String
+  hourEnd     Int
+  hourEndStr  String
+
+  minuteInit    Int
+  minuteInitStr String
+  minuteEnd     Int
+  minuteEndStr  String
+
+  order Int @default(0)
+
+  scheduleWeekDayId String
+  scheduleWeekDay   ScheduleWeekdDays @relation(references: [id], fields: [scheduleWeekDayId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([scheduleWeekDayId])
 }

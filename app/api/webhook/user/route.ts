@@ -11,9 +11,10 @@ export async function POST(req: Request) {
     if (type == "user.created") {
       console.log(data);
 
-      let email: undefined;
-      if (data.email_addresses && Array.isArray(data.email_addresses)) {
-        email = (data.email_addresses as Array<any>)[0].email_addresses;
+      let email = "";
+      if (data.email_addresses) {
+        const tempEmasil = [...(data.email_addresses as Array<any>)];
+        email = tempEmasil[0].email_address;
       }
       await createNewUser({
         userId: data.id,

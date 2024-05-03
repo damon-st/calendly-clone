@@ -19,9 +19,11 @@ export default async function IntroLayout() {
   const introP = user.introInfo;
   let progress = 50;
   let step = 1;
+  let title = "¿Cómo planeas usar Calendly?";
   if (introP) {
     step = 2;
     progress = 100;
+    title = "¿Cuentas cual es tu rol en tu trabajo?";
   }
   const stepOne = step == 1;
   if (introP?.howDoYouWork) {
@@ -69,9 +71,7 @@ export default async function IntroLayout() {
           <h3 className="text-colorText font-girloyRegular">
             BIENVENIDO, {user.name?.toUpperCase()}!
           </h3>
-          <h1 className="text-colorText text-2xl font-girloyBold">
-            ¿Cómo planeas usar Calendly?
-          </h1>
+          <h1 className="text-colorText text-2xl font-girloyBold">{title}</h1>
         </div>
         <div className="w-full flex items-center justify-center">
           {stepOne ? <IntroInfoTeam /> : <IntroInfoDoWork />}

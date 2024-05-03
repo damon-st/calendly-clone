@@ -1,6 +1,6 @@
 export type UserDto = {
   userId: string;
   name?: string;
-  email?: string;
+  email: string;
   imageUrl?: string;
 };

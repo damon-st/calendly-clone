@@ -68,6 +68,8 @@ const config = {
         colorGrisDash: "#fafafa",
         colorTextBlack: "#1A1A1A",
         colorTextGris: "#1A1A1A9C",
+        colorCelesteHover: "#dbf1ff",
+        colorError: "#B31F1FCC",
       },
       borderRadius: {
         lg: "var(--radius)",
