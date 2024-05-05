@@ -13,7 +13,7 @@ export default async function AvalibilitySchedulesList() {
   return (
     <div className="w-full">
       <h2 className="text-lg font-bold text-colorTextBlack">Schedule</h2>
-      <SchedulesList schedules={schedules} />
+      <SchedulesList schedules={schedules} userId={userId} />
     </div>
   );
 }

@@ -19,6 +19,9 @@ export const getAllSchedules = async (userId: string) => {
           include: {
             scheduleHours: true,
           },
+          orderBy: {
+            weekDay: "asc",
+          },
         },
       },
     });
@@ -28,7 +31,10 @@ export const getAllSchedules = async (userId: string) => {
   }
 };
 
-export const createDefaultSchedule = async (userId: string) => {
+export const createDefaultSchedule = async (
+  userId: string,
+  title: string = "Working hours"
+): Promise<TypeResultAction> => {
   try {
     const temp = getCountry("EC");
 
@@ -40,7 +46,7 @@ export const createDefaultSchedule = async (userId: string) => {
         countryName: temp.name,
         timeZone: temp.timezones[0],
         userId,
-        title: "Working hours",
+        title,
       },
     });
 
@@ -68,10 +74,10 @@ export const createDefaultSchedule = async (userId: string) => {
       });
     }
 
-    return undefined;
+    return { message: "Create success", success: true };
   } catch (error) {
     console.log(error);
-    return undefined;
+    return { message: `Error:${error}`, success: false };
   }
 };
 
@@ -202,5 +208,53 @@ export const deleteScheduleWeekDayHOUR = async (
       message: `Error:${error}`,
       success: false,
     };
+  }
+};
+
+export const updateNameScheduleAviability = async (
+  id: string,
+  title: string
+): Promise<TypeResultAction> => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    const result = await db.scheduleM.update({
+      where: {
+        id,
+        userId,
+      },
+      data: {
+        title,
+      },
+    });
+    return { success: true, message: "Changes saved" };
+  } catch (error) {
+    console.log(error);
+    return {
+      message: `Error:${error}`,
+      success: false,
+    };
+  }
+};
+
+export const deleteScheduleAviability = async (
+  id: string,
+  userId: string
+): Promise<TypeResultAction> => {
+  try {
+    await db.scheduleM.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
+    return {
+      message: `Delete success`,
+      success: true,
+    };
+  } catch (error) {
+    return { message: `Error:${error}`, success: false };
   }
 };

@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 import { Toaster } from "@/components/ui/sonner";
+import ModalProviders from "@/components/providers/ModalProviders";
 
 export const metadata: Metadata = {
   title: "Free Online Appointment Scheduling Software | Calendly",
@@ -23,6 +24,7 @@ export default function RootLayout({
         <body className={inter.className}>
           {children}
           <Toaster />
+          <ModalProviders />
         </body>
       </html>
     </ClerkProvider>
