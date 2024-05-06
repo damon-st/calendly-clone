@@ -51,3 +51,73 @@ export type TypeTimeHourValid = {
   hourStr: string;
   minStr: string;
 };
+
+export type TypeDurationCustom = {
+  time: number;
+  format: "min" | "hrs";
+};
+
+export type TypeLocationEventNames =
+  | "zoom"
+  | "phoneCall"
+  | "inPerson"
+  | "askInvite"
+  | "custom"
+  | "googleMeet"
+  | "mTeams"
+  | "goToMeting"
+  | "webex";
+
+export type TypeLocationEvent =
+  | {
+      type: "zoom";
+      data?: {};
+    }
+  | {
+      type: "phoneCall";
+      data: {
+        type: "mee" | "callMe";
+        phone?: string;
+        msgAditional?: string;
+        country?: string;
+      };
+    }
+  | {
+      type: "inPerson";
+      data: {
+        location: string;
+        msgAditional?: string;
+      };
+    }
+  | {
+      type: "askInvite";
+      data?: {};
+    }
+  | {
+      type: "custom";
+      data: {
+        value: string;
+        typeShow: "before" | "after";
+      };
+    }
+  | {
+      type: "googleMeet";
+      data?: {};
+    }
+  | {
+      type: "mTeams";
+      data?: {};
+    }
+  | {
+      type: "goToMeting";
+      data?: {};
+    }
+  | {
+      type: "webex";
+      data?: {};
+    };
+
+export type TypeNewEventLocation = {
+  type: TypeLocationEvent;
+  data?: any;
+};

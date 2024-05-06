@@ -75,7 +75,7 @@ export default async function DashboardPage({}: Props) {
             </div>
             <div className="flex items-center gap-2">
               <Link
-                href="/dashboard/new"
+                href="/dashboard/new-event"
                 className="text-colorAzul bg-white font-girloyRegular rounded-full border border-colorAzul px-3 py-1 hover:bg-colorCelesteHover"
               >
                 New Event Type
