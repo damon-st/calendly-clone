@@ -1,13 +1,12 @@
 import { create } from "zustand";
-import { TypeDurationCustom, TypeNewEventLocation } from "../types";
+import {
+  DataNewEnvet,
+  TypeDurationCustom,
+  TypeNewEventLocation,
+  TypeResultAction,
+} from "../types";
 import { colorDefault } from "@/common/colorsDefault";
-
-type DataNewEnvet = {
-  color: string;
-  nameEvent: string;
-  duration: TypeDurationCustom;
-  location: TypeNewEventLocation;
-};
+import { createNewEvent } from "@/actions/event_type";
 
 const initialData: DataNewEnvet = {
   color: colorDefault[0].color,
@@ -17,10 +16,7 @@ const initialData: DataNewEnvet = {
   },
   location: {
     type: {
-      type: "inPerson",
-      data: {
-        location: "",
-      },
+      type: "none",
     },
   },
   nameEvent: "",
@@ -34,6 +30,7 @@ type TypeNewEvent = {
   onChangeDuration: (duration: TypeDurationCustom) => void;
   onChangeLocation: (location: TypeNewEventLocation) => void;
   onReset: () => void;
+  onSave: (data: DataNewEnvet, typeEvent: string) => Promise<TypeResultAction>;
 };
 
 export const useNewEnventStore = create<TypeNewEvent>((set) => ({
@@ -77,4 +74,7 @@ export const useNewEnventStore = create<TypeNewEvent>((set) => ({
         location,
       },
     })),
+  async onSave(data, typeEvent) {
+    return createNewEvent(data, typeEvent);
+  },
 }));

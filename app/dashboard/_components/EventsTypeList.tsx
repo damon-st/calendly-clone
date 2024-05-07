@@ -1,13 +1,28 @@
+import { getAllEvents } from "@/actions/event_type";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@prisma/client";
 import React from "react";
+import EventTypeItem from "./EventTypeItem";
 
 type Props = {
   user: User;
+  urlUser: string;
 };
 
-export default async function EventsTypeList({ user }: Props) {
-  return <div></div>;
+export default async function EventsTypeList({ user, urlUser }: Props) {
+  const eventLists = await getAllEvents();
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      {eventLists.map((e) => (
+        <EventTypeItem
+          urlUser={urlUser}
+          key={e.id}
+          event={e}
+          userId={user.userId}
+        />
+      ))}
+    </div>
+  );
 }
 
 export const EventsTypeListSkeleton = () => {

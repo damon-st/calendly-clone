@@ -16,11 +16,13 @@ export async function POST(req: Request) {
         const tempEmasil = [...(data.email_addresses as Array<any>)];
         email = tempEmasil[0].email_address;
       }
+      const emailT = (email ?? "").split("@")?.[0];
       await createNewUser({
         userId: data.id,
         email: email,
         name: data.first_name + " " + data.last_name,
         imageUrl: data.image_url,
+        userName: emailT,
       });
     }
 

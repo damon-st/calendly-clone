@@ -66,3 +66,11 @@ export function formatHourMin(value: number) {
   }
   return `${value}`;
 }
+
+export function divideArrayInParts<T>(arreglo: Array<T>, size: number) {
+  var partes = [];
+  for (var i = 0; i < arreglo.length; i += size) {
+    partes.push(arreglo.slice(i, i + size));
+  }
+  return partes;
+}

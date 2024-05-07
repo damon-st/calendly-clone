@@ -1,8 +1,8 @@
 import React from "react";
-import SidebarCreate from "./_components/SidebarCreate";
-import PreviewCreate from "./_components/PreviewCreate";
 import { existUser } from "@/lib/services/user";
 import { auth } from "@clerk/nextjs/server";
+import SidebarCreate from "@/components/event_type/SidebarCreate";
+import PreviewCreate from "@/components/event_type/PreviewCreate";
 
 type Props = {
   params: {

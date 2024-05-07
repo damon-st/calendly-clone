@@ -33,8 +33,7 @@ export default async function DashboardPage({}: Props) {
     return null;
   }
   const name = (user.name ?? "USER").substring(0, 2).toUpperCase();
-  const email = (user.email ?? "").split("@")?.[0];
-  const urlUser = (process.env.NEXT_PUBLIC_URL ?? "") + "/" + email;
+  const urlUser = (process.env.NEXT_PUBLIC_URL ?? "") + "/" + user.userName;
   return (
     <div className="w-full flex flex-col gap-9">
       <div className="py-4">
@@ -116,7 +115,7 @@ export default async function DashboardPage({}: Props) {
           </div>
           <div className="w-full">
             <Suspense fallback={<EventsTypeListSkeleton />}>
-              <EventsTypeList user={user} />
+              <EventsTypeList urlUser={urlUser} user={user} />
             </Suspense>
           </div>
         </div>

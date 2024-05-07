@@ -33,7 +33,8 @@ export const getAllSchedules = async (userId: string) => {
 
 export const createDefaultSchedule = async (
   userId: string,
-  title: string = "Working hours"
+  title: string = "Working hours",
+  favorite: boolean
 ): Promise<TypeResultAction> => {
   try {
     const temp = getCountry("EC");
@@ -47,6 +48,7 @@ export const createDefaultSchedule = async (
         timeZone: temp.timezones[0],
         userId,
         title,
+        favorite,
       },
     });
 
@@ -256,5 +258,43 @@ export const deleteScheduleAviability = async (
     };
   } catch (error) {
     return { message: `Error:${error}`, success: false };
+  }
+};
+
+export const makeDefautlScheduleAvailability = async (
+  id: string
+): Promise<TypeResultAction> => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    await db.scheduleM.updateMany({
+      where: {
+        userId,
+      },
+      data: {
+        favorite: false,
+      },
+    });
+    await db.scheduleM.update({
+      where: {
+        userId,
+        id,
+      },
+      data: {
+        favorite: true,
+      },
+    });
+    return {
+      message: "Update success",
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message: `${error}`,
+      success: false,
+    };
   }
 };

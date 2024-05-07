@@ -49,7 +49,11 @@ export default function EditNameAviabilityModal() {
     startTransition(async () => {
       try {
         if (data.isCreated) {
-          const result = await createDefaultSchedule(data.userId ?? "", value);
+          const result = await createDefaultSchedule(
+            data.userId ?? "",
+            value,
+            data.favorite ?? false
+          );
           if (!result.success) {
             throw new Error(result.message);
           }

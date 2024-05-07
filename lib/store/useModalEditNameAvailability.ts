@@ -6,6 +6,7 @@ type Data = {
   onChange?: (e: string) => void;
   isCreated?: boolean;
   userId?: string;
+  favorite?: boolean;
 };
 
 type EditNameAvailability = {

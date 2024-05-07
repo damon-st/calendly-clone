@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import EditNameAviabilityModal from "../modals/EditNameAviabilityModal";
 import RemoveAvailabilityModal from "../modals/RemoveAvailabilityModal";
-import EditLocationModal from "../modals/EditLocationModal";
+import EditLocationModal from "../modals/edit_location_modal/EditLocationModal";
 
 type Props = {};
 

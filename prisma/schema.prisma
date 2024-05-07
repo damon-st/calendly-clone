@@ -21,9 +21,12 @@ model User {
   name     String?
   email    String  @unique
   imageUrl String?
+  userName String
 
   introInfoId String?
   introInfo   IntroInfo? @relation(fields: [introInfoId], references: [id], onDelete: Cascade)
+
+  events EventType[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -53,6 +56,7 @@ model ScheduleM {
   timeZone    String
   countryCode String
   countryName String
+  favorite    Boolean
 
   scheduleWeekDays ScheduleWeekdDays[]
 
@@ -100,4 +104,23 @@ model ScheduleHoursM {
   updatedAt DateTime @updatedAt
 
   @@index([scheduleWeekDayId])
+}
+
+model EventType {
+  id String @id @default(uuid()) @map("_id")
+
+  userId String
+  user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  eventName  String
+  colorEvent String
+  typeEvent  String
+
+  duration Json
+  location Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

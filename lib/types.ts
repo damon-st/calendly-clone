@@ -1,5 +1,10 @@
 import { getAllSchedules } from "@/actions/schedules";
-import { Prisma } from "@prisma/client";
+import {
+  EventType,
+  Prisma,
+  ScheduleHoursM,
+  ScheduleWeekdDays,
+} from "@prisma/client";
 
 export type TypeSectionTabsInfo = {
   title: string;
@@ -34,7 +39,11 @@ export type TypeSectionFourInfoBusin = {
 };
 
 export type TypeIntroInfo = { title: string; value: string; imgUrl: string };
-export type TypeResultAction = { message: string; success: boolean };
+export type TypeResultAction = {
+  message: string;
+  success: boolean;
+  data?: any;
+};
 
 export type ShedulesWithTypes = Prisma.PromiseReturnType<
   typeof getAllSchedules
@@ -66,11 +75,16 @@ export type TypeLocationEventNames =
   | "googleMeet"
   | "mTeams"
   | "goToMeting"
-  | "webex";
+  | "webex"
+  | "none";
 
 export type TypeLocationEvent =
   | {
       type: "zoom";
+      data?: {};
+    }
+  | {
+      type: "none";
       data?: {};
     }
   | {
@@ -120,4 +134,28 @@ export type TypeLocationEvent =
 export type TypeNewEventLocation = {
   type: TypeLocationEvent;
   data?: any;
+};
+
+export type TypeCountry = {
+  name: string;
+  flag: string;
+  code: string;
+  country: string;
+  phone?: string;
+};
+
+export type DataNewEnvet = {
+  color: string;
+  nameEvent: string;
+  duration: TypeDurationCustom;
+  location: TypeNewEventLocation;
+};
+
+export type TypeEventFormating = EventType & {
+  duration: TypeDurationCustom;
+  location: TypeLocationEvent;
+};
+
+export type ScheduleTypeWithHours = ScheduleWeekdDays & {
+  scheduleHours: ScheduleHoursM[];
 };

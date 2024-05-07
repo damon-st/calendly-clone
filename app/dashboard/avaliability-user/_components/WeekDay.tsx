@@ -1,9 +1,8 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { ScheduleHoursM, ScheduleWeekdDays } from "@prisma/client";
 import { Copy, Loader, Plus } from "lucide-react";
-import React, { useState, useTransition } from "react";
+import React, { useCallback, useState, useTransition } from "react";
 import Hours from "./Hours";
 import { toast } from "sonner";
 import {
@@ -12,39 +11,41 @@ import {
   updateScheduleWeekDayActiveOrDesct,
   updateScheduleWeekDayHours,
 } from "@/actions/schedules";
-import { TypeTimeHourValid } from "@/lib/types";
-
-type ScheduleType = ScheduleWeekdDays & {
-  scheduleHours: ScheduleHoursM[];
-};
+import { ScheduleTypeWithHours, TypeTimeHourValid } from "@/lib/types";
 
 type Props = {
-  week: ScheduleType;
+  week: ScheduleTypeWithHours;
+  onChangeValue: (e: ScheduleTypeWithHours) => void;
 };
 
-export default function WeekDay({ week: iniTialValue }: Props) {
+export default function WeekDay({ week: iniTialValue, onChangeValue }: Props) {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [week, setWeek] = useState(iniTialValue);
-  const onChangeActive = (e: any) => {
-    if (isPending) return;
-    startTransition(async () => {
-      try {
-        const result = await updateScheduleWeekDayActiveOrDesct(e, week.id);
-        if (!result.success) {
-          throw new Error(result.message);
+  const onChangeActive = useCallback(
+    (e: boolean) => {
+      if (isPending) return;
+      startTransition(async () => {
+        try {
+          const result = await updateScheduleWeekDayActiveOrDesct(e, week.id);
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+          let newValue = { ...week, active: e };
+          setWeek(newValue);
+          onChangeValue(newValue);
+          toast.success("Changed saved", {
+            position: "bottom-center",
+            duration: 1000,
+          });
+        } catch (error) {
+          console.log(error);
+          toast.error(`${error}`);
         }
-        setWeek((prev) => ({ ...prev, active: e }));
-        toast.success("Changed saved", {
-          position: "bottom-center",
-          duration: 1000,
-        });
-      } catch (error) {
-        console.log(error);
-        toast.error(`${error}`);
-      }
-    });
-  };
+      });
+    },
+    [isPending, onChangeValue, week]
+  );
 
   const handleDisabled = (id: string) => {
     if (week.scheduleHours.length <= 1) {
@@ -58,14 +59,11 @@ export default function WeekDay({ week: iniTialValue }: Props) {
         if (!result.success) {
           throw new Error(result.message);
         }
-        setWeek((prev) => {
-          let temp = [...prev.scheduleHours];
-          temp = temp.filter((v) => v.id != id);
-          return {
-            ...prev,
-            scheduleHours: temp,
-          };
-        });
+        let tempHours = [...week.scheduleHours];
+        tempHours = tempHours.filter((v) => v.id != id);
+        const newValue = { ...week, scheduleHours: tempHours };
+        setWeek(newValue);
+        onChangeValue(newValue);
         toast.success(`Changed Saved`, {
           position: "bottom-center",
           duration: 1000,
@@ -107,17 +105,14 @@ export default function WeekDay({ week: iniTialValue }: Props) {
         if (!result) {
           throw new Error("Error update time");
         }
-        setWeek((prev) => {
-          let temp = [...prev.scheduleHours];
-          const indexPrev = temp.findIndex((v) => v.id == idTime);
-          if (indexPrev >= 0) {
-            temp[indexPrev] = result;
-          }
-          return {
-            ...prev,
-            scheduleHours: temp,
-          };
-        });
+        let tempHours = [...week.scheduleHours];
+        const indexPrev = tempHours.findIndex((v) => v.id == idTime);
+        if (indexPrev >= 0) {
+          tempHours[indexPrev] = result;
+        }
+        const newValue = { ...week, scheduleHours: tempHours };
+        setWeek(newValue);
+        onChangeValue(newValue);
         toast.success("Changed Saved", {
           position: "bottom-center",
           duration: 1000,
@@ -144,14 +139,11 @@ export default function WeekDay({ week: iniTialValue }: Props) {
         if (!result) {
           throw new Error("Error in create new hours");
         }
-        setWeek((prev) => {
-          let temp = [...prev.scheduleHours];
-          temp.push(result);
-          return {
-            ...prev,
-            scheduleHours: temp,
-          };
-        });
+        let tempHours = [...week.scheduleHours];
+        tempHours.push(result);
+        const newValue = { ...week, scheduleHours: tempHours };
+        setWeek(newValue);
+        onChangeValue(newValue);
         toast.success(`Changed Saved`, {
           position: "bottom-center",
           duration: 1000,
@@ -189,17 +181,25 @@ export default function WeekDay({ week: iniTialValue }: Props) {
         </label>
       </div>
       <div className="w-[60%] flex flex-col gap-2">
-        {week.scheduleHours.map((v) => (
-          <Hours
-            weekDay={week.weekDay}
-            onSaveTime={onSaveTimeHour}
-            handleDisabled={handleDisabled}
-            active={week.active}
-            key={v.id}
-            hours={v}
-            scheduleWeekDayId={week.id}
-          />
-        ))}
+        {week.active ? (
+          <>
+            {week.scheduleHours.map((v) => (
+              <Hours
+                weekDay={week.weekDay}
+                onSaveTime={onSaveTimeHour}
+                handleDisabled={handleDisabled}
+                active={week.active}
+                key={v.id}
+                hours={v}
+                scheduleWeekDayId={week.id}
+              />
+            ))}
+          </>
+        ) : (
+          <div className="flex items-center text-colorTextGris font-girloyRegular">
+            Unavailable
+          </div>
+        )}
       </div>
       <div className="w-[20%] flex items-start gap-2">
         <button

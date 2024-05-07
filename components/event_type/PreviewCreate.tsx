@@ -1,7 +1,7 @@
 "use client";
 import { useNewEnventStore } from "@/lib/store/useNewEvent";
 import { User } from "@prisma/client";
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, Phone, Video } from "lucide-react";
 import React, { useMemo } from "react";
 
 type Props = {
@@ -24,6 +24,14 @@ export default function PreviewCreate({ user, isCreating }: Props) {
   }, [data.duration]);
 
   const typeLocation = useMemo(() => {
+    if (data.location.type.type == "none") {
+      return (
+        <div className="flex items-center gap-2">
+          <MapPin className="text-colorTextGris" />
+          <span>Add a location for it to show here</span>
+        </div>
+      );
+    }
     if (data.location.type.type === "inPerson") {
       return (
         <div className="flex items-center gap-2">
@@ -36,12 +44,31 @@ export default function PreviewCreate({ user, isCreating }: Props) {
         </div>
       );
     }
+
+    if (data.location.type.type == "phoneCall") {
+      return (
+        <div className="flex items-center gap-2 font-girloySemiBold">
+          <Phone className="text-colorTextGris" />
+          <span>Phone call</span>
+        </div>
+      );
+    }
+
+    if (data.location.type.type == "zoom") {
+      return (
+        <div className="flex items-center gap-3 text-colorTextGris font-girloySemiBold">
+          <Video className="text-colorTextGris" />
+          <span>Web conferencing details provided upon confirmation.</span>
+        </div>
+      );
+    }
+
     return null;
   }, [data.location.type.type]);
 
   return (
     <div className="size-full flex items-center justify-center m-auto p-4">
-      <div className="w-full max-w-[640px] h-full bg-white rounded-lg shadow-lg flex flex-col">
+      <div className="w-full max-w-[640px] min-h-[753px] bg-white rounded-lg shadow-lg flex flex-col">
         <div className="w-full rounded-t-lg text-sm bg-colorTextBlack py-2 px-4 text-white font-girloyRegular">
           <span className="font-girloyBold">This is a preview. </span>
           <span>. To book an event, share the link with your invitees.</span>

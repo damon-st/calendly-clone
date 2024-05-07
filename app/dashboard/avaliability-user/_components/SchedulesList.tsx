@@ -1,5 +1,5 @@
 "use client";
-import { ShedulesWithTypes } from "@/lib/types";
+import { ScheduleTypeWithHours, ShedulesWithTypes } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
   Calendar,
@@ -10,9 +10,10 @@ import {
   LucideCalendarHeart,
   Plus,
   Settings,
+  Star,
   Trash,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import WeekDay from "./WeekDay";
 import {
   DropdownMenu,
@@ -23,6 +24,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditNameAvailability } from "@/lib/store/useModalEditNameAvailability";
 import { useRemoveAvailability } from "@/lib/store/useRemoveAvailability";
+import { toast } from "sonner";
+import { makeDefautlScheduleAvailability } from "@/actions/schedules";
+import CalendarCustom from "@/components/calendar/CalendarCustom";
 
 type Props = {
   userId: string;
@@ -32,6 +36,7 @@ type Props = {
 type TypeView = "ListView" | "CalendarView";
 
 export default function SchedulesList({ schedules, userId }: Props) {
+  const [isPending, startTransition] = useTransition();
   const [schedulesList, setSchedulesList] = useState(schedules);
   const [typeView, setTypeView] = useState<TypeView>("ListView");
   const [scheduleSelect, setScheduleSelect] = useState(() =>
@@ -45,6 +50,7 @@ export default function SchedulesList({ schedules, userId }: Props) {
       setScheduleSelect(null);
       return;
     }
+    setSchedulesList(schedules);
     if (!scheduleSelect) {
       setScheduleSelect(schedules[0]);
       return;
@@ -53,7 +59,7 @@ export default function SchedulesList({ schedules, userId }: Props) {
       setScheduleSelect(schedules[0]);
       return;
     }
-  }, [scheduleSelect, schedules]);
+  }, [schedules]);
 
   const onEditName = () => {
     onOpen({
@@ -78,7 +84,11 @@ export default function SchedulesList({ schedules, userId }: Props) {
   };
 
   const onCreateSchedule = () => {
-    onOpen({ isCreated: true, userId: userId });
+    onOpen({
+      isCreated: true,
+      userId: userId,
+      favorite: schedules.length == 0,
+    });
   };
 
   const onDelete = () => {
@@ -88,6 +98,68 @@ export default function SchedulesList({ schedules, userId }: Props) {
       title: scheduleSelect?.title ?? "",
     });
   };
+
+  const onChangeWeekDays = useCallback(
+    (value: ScheduleTypeWithHours) => {
+      if (!scheduleSelect) {
+        return;
+      }
+      let scheduleWeekDays = [...scheduleSelect!.scheduleWeekDays];
+      const indexPrev = scheduleWeekDays.findIndex((v) => v.id == value.id);
+      if (indexPrev >= 0) {
+        scheduleWeekDays[indexPrev] = value;
+      }
+      let newValue = { ...scheduleSelect, scheduleWeekDays };
+
+      setScheduleSelect(newValue);
+
+      setSchedulesList((prev) => {
+        let temp = [...prev];
+
+        const indexPrev = temp.findIndex((v) => v.id === scheduleSelect.id);
+        console.log(indexPrev);
+
+        if (indexPrev >= 0) {
+          temp[indexPrev] = newValue;
+        }
+
+        return temp;
+      });
+    },
+    [scheduleSelect]
+  );
+
+  const onSetDefault = useCallback(() => {
+    if (isPending) return;
+    startTransition(async () => {
+      try {
+        const response = await makeDefautlScheduleAvailability(
+          scheduleSelect?.id ?? ""
+        );
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        let newValue = { ...scheduleSelect!, favorite: true };
+
+        setScheduleSelect(newValue);
+
+        setSchedulesList((prev) => {
+          let temp = [...prev];
+          for (const iterator of temp) {
+            iterator.favorite = false;
+          }
+          const findIndex = temp.findIndex((v) => v.id === scheduleSelect?.id);
+          if (findIndex >= 0) {
+            temp[findIndex] = newValue;
+          }
+          return temp;
+        });
+      } catch (error) {
+        console.log(error);
+        toast.error(`${error}`);
+      }
+    });
+  }, [isPending, scheduleSelect]);
 
   return (
     <div className="w-full mt-4">
@@ -102,12 +174,14 @@ export default function SchedulesList({ schedules, userId }: Props) {
                 "!bg-[#f2f8ff] !text-colorAzul !border-colorAzul"
             )}
           >
-            <LucideCalendarHeart
-              className={cn(
-                "text-[#1a1a1a9c]",
-                scheduleSelect?.id == v.id && "text-colorAzul"
-              )}
-            />
+            {v.favorite && (
+              <LucideCalendarHeart
+                className={cn(
+                  "text-[#1a1a1a9c]",
+                  scheduleSelect?.id == v.id && "text-colorAzul"
+                )}
+              />
+            )}
             <span className="font-light">{v.title}</span>
           </div>
         ))}
@@ -196,6 +270,17 @@ export default function SchedulesList({ schedules, userId }: Props) {
                         Clone
                       </span>
                     </DropdownMenuItem>
+                    {!scheduleSelect.favorite && (
+                      <DropdownMenuItem
+                        onClick={onSetDefault}
+                        className="flex cursor-pointer gap-2"
+                      >
+                        <Star className="text-colorTextBlack fill-black" />
+                        <span className="text-colorTextBlack font-girloyLight">
+                          Set as default
+                        </span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       onClick={onDelete}
                       className="flex cursor-pointer gap-2"
@@ -210,29 +295,39 @@ export default function SchedulesList({ schedules, userId }: Props) {
               </div>
             </div>
           </div>
-          <div className="w-full flex">
-            <div className="w-full flex flex-col gap-2 md:w-[50%] md:border-r border-gray-300 p-6">
-              <h3 className="text-lg font-girloyBold text-colorTextBlack">
-                Weekly hours
-              </h3>
-              {scheduleSelect?.scheduleWeekDays.map((v) => (
-                <WeekDay key={v.id} week={v} />
-              ))}
+          {typeView == "ListView" ? (
+            <div className="w-full flex">
+              <div className="w-full flex flex-col gap-2 md:w-[50%] md:border-r border-gray-300 p-6">
+                <h3 className="text-lg font-girloyBold text-colorTextBlack">
+                  Weekly hours
+                </h3>
+                {scheduleSelect?.scheduleWeekDays.map((v) => (
+                  <WeekDay
+                    onChangeValue={onChangeWeekDays}
+                    key={v.id}
+                    week={v}
+                  />
+                ))}
+              </div>
+              <div className="w-full md:w-[50%] p-6 gap-4 flex flex-col">
+                <h3 className="text-lg font-girloyBold text-colorTextBlack">
+                  Date-specific hours
+                </h3>
+                <p className="text-colorTextGris font-girloyRegular text-sm">
+                  Override your availability for specific dates when your hours
+                  differ from your regular weekly hours.
+                </p>
+                <button className="flex gap-2 items-center text-colorTextBlack text-sm font-girloyRegular border border-colorTextBlack rounded-full w-fit px-2 py-1 hover:bg-colorGris">
+                  <Plus />
+                  <span>Add date-specific hours</span>
+                </button>
+              </div>
             </div>
-            <div className="w-full md:w-[50%] p-6 gap-4 flex flex-col">
-              <h3 className="text-lg font-girloyBold text-colorTextBlack">
-                Date-specific hours
-              </h3>
-              <p className="text-colorTextGris font-girloyRegular text-sm">
-                Override your availability for specific dates when your hours
-                differ from your regular weekly hours.
-              </p>
-              <button className="flex gap-2 items-center text-colorTextBlack text-sm font-girloyRegular border border-colorTextBlack rounded-full w-fit px-2 py-1 hover:bg-colorGris">
-                <Plus />
-                <span>Add date-specific hours</span>
-              </button>
+          ) : (
+            <div className="w-full">
+              <CalendarCustom />
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

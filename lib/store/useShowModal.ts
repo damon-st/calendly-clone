@@ -1,6 +1,9 @@
 import { create } from "zustand";
+import { TypeLocationEventNames } from "../types";
 
-type Data = {};
+type Data = {
+  type?: TypeLocationEventNames;
+};
 
 type TypeModal = "none" | "editLocation";
 
