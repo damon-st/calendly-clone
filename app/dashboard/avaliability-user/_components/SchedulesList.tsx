@@ -325,7 +325,7 @@ export default function SchedulesList({ schedules, userId }: Props) {
             </div>
           ) : (
             <div className="w-full">
-              <CalendarCustom />
+              <CalendarCustom weekHours={scheduleSelect.scheduleWeekDays} />
             </div>
           )}
         </div>

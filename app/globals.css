@@ -338,3 +338,33 @@ html,body,:root{
 .shadow-card {
     box-shadow: 0 1px 6px 0 rgb(0 0 0/10%);
 }
+
+.tdCal{
+    position: relative;
+    width: calc(100%/7);
+    min-height: 140px;
+    border-top: 1px solid var(--text-color-level3,rgba(26,26,26,0.1));
+
+}
+
+.inactiveDates {
+    background-color: var(--color-grey-4,#F2F2F2);
+    cursor: not-allowed;
+    color: #1A1A1A9C;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.tdHover:hover{
+  border: 2px solid #006BFF;
+  background-color: #E6F0FF;
+}
+
+.textBlack{
+  color: black !important;
+}
+
+.currentDate{
+    background-color: var(--text-color-level3,rgba(26,26,26,0.1));
+    color: var(--text-color,rgb(26,26,26));
+}
