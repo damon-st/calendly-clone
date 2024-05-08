@@ -60,6 +60,8 @@ model ScheduleM {
 
   scheduleWeekDays ScheduleWeekdDays[]
 
+  eventTypes EventType[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -119,8 +121,12 @@ model EventType {
   duration Json
   location Json
 
+  scheduleAvailibityId String
+  scheduleAvailibity   ScheduleM @relation(references: [id], fields: [scheduleAvailibityId], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([scheduleAvailibityId])
 }

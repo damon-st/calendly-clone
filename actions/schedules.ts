@@ -298,3 +298,27 @@ export const makeDefautlScheduleAvailability = async (
     };
   }
 };
+
+export const getSchedulesFavorite = async (userId: string) => {
+  try {
+    return await db.scheduleM.findFirst({
+      where: {
+        userId,
+        favorite: true,
+      },
+      include: {
+        scheduleWeekDays: {
+          include: {
+            scheduleHours: true,
+          },
+          orderBy: {
+            weekDay: "asc",
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.log("[ERROR_getAllSchedules]", error);
+    return null;
+  }
+};

@@ -3,7 +3,9 @@ import {
   EventType,
   Prisma,
   ScheduleHoursM,
+  ScheduleM,
   ScheduleWeekdDays,
+  User,
 } from "@prisma/client";
 
 export type TypeSectionTabsInfo = {
@@ -153,7 +155,13 @@ export type DataNewEnvet = {
 
 export type TypeEventFormating = EventType & {
   duration: TypeDurationCustom;
-  location: TypeLocationEvent;
+  location: TypeNewEventLocation;
+  user?: User | null;
+  scheduleAvailibity?: ScheduleWithProps | null;
+};
+
+export type ScheduleWithProps = ScheduleM & {
+  scheduleWeekDays: ScheduleTypeWithHours[];
 };
 
 export type ScheduleTypeWithHours = ScheduleWeekdDays & {

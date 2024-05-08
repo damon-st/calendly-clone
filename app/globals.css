@@ -344,15 +344,28 @@ html,body,:root{
     width: calc(100%/7);
     min-height: 140px;
     border-top: 1px solid var(--text-color-level3,rgba(26,26,26,0.1));
-
 }
+
+
 
 .inactiveDates {
     background-color: var(--color-grey-4,#F2F2F2);
     cursor: not-allowed;
     color: #1A1A1A9C;
-    font-weight: 700;
+    font-weight: 300;
     pointer-events: none;
+}
+.inactiveDatesBook {
+    background-color: white;
+    cursor: not-allowed;
+    color:#1a1a1a9c;
+    font-weight: 300;
+    pointer-events: none;
+}
+
+.tdCalBook{
+  position: relative;
+    width: calc(100%/7);
 }
 
 .tdHover:hover{
@@ -366,5 +379,38 @@ html,body,:root{
 
 .currentDate{
     background-color: var(--text-color-level3,rgba(26,26,26,0.1));
-    color: var(--text-color,rgb(26,26,26));
+    color: #1a1a1a;
+}
+
+.validDateBook > button{
+  background-color: var(--primary-color-level4,rgba(0,105,255,0.065));
+  border-radius: 100%;
+  color: #0060e6;
+  font-weight: bold;
+}
+
+.dateSelecBook >button{
+  background-color: #0060e6;
+  color: white;
+}
+
+.inactiveDatesLast > button{
+  background-color: white;
+  color: #1a1a1a9c;
+  font-weight: 300;
+}
+
+.tdHoverBook:hover{
+  background-color: #E6F0FF;
+  border-radius: 100%;
+}
+
+.datesNoValid > button{
+  background-color: white !important;
+  color: #1a1a1a9c;
+  font-weight: 300;
+}
+
+.transition-width {
+  transition: width 300ms;
 }

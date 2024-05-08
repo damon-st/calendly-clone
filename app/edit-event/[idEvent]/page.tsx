@@ -1,6 +1,5 @@
 import { getSingleEvent } from "@/actions/event_type";
 import PreviewCreate from "@/components/event_type/PreviewCreate";
-import SidebarCreate from "@/components/event_type/SidebarCreate";
 import SidebarEditEventType from "@/components/event_type/SidebarEditEventType";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -26,7 +25,7 @@ export default async function EditEventPage({ params }: Props) {
         />
       </div>
       <div className="w-[70%] h-full">
-        <PreviewCreate user={null} isCreating={false} />
+        <PreviewCreate eventType={eventType} user={null} isCreating={false} />
       </div>
     </main>
   );

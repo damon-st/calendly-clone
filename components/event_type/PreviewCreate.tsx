@@ -2,15 +2,18 @@
 import { useNewEnventStore } from "@/lib/store/useNewEvent";
 import { User } from "@prisma/client";
 import { Clock, MapPin, Phone, Video } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import SelectTimeEvent from "./SelectTimeEvent";
+import { TypeEventFormating } from "@/lib/types";
 
 type Props = {
   user?: User | null;
   isCreating: boolean;
+  eventType?: TypeEventFormating;
 };
 
-export default function PreviewCreate({ user, isCreating }: Props) {
-  const { data } = useNewEnventStore();
+export default function PreviewCreate({ user, isCreating, eventType }: Props) {
+  const { data, onChange } = useNewEnventStore();
 
   const title = useMemo(() => {
     if (data.nameEvent.length == 0) return "Event name here";
@@ -66,6 +69,18 @@ export default function PreviewCreate({ user, isCreating }: Props) {
     return null;
   }, [data.location.type.type]);
 
+  useEffect(() => {
+    if (!eventType) return;
+    console.log(eventType.location);
+
+    onChange({
+      color: eventType.colorEvent,
+      duration: eventType.duration,
+      nameEvent: eventType.eventName,
+      location: eventType.location,
+    });
+  }, [eventType]);
+
   return (
     <div className="size-full flex items-center justify-center m-auto p-4">
       <div className="w-full max-w-[640px] min-h-[753px] bg-white rounded-lg shadow-lg flex flex-col">
@@ -88,11 +103,17 @@ export default function PreviewCreate({ user, isCreating }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex flex-1 flex-col w-full h-auto items-center justify-center">
-          {isCreating && (
+        <div className="flex flex-1 flex-col w-full h-auto items-center justify-center px-4">
+          {isCreating ? (
             <p className="text-colorTextGris font-girloyBold text-lg max-w-[300px] text-center">
               A preview of your availability will show on the next step
             </p>
+          ) : (
+            <>
+              {eventType && (
+                <SelectTimeEvent preview={true} eventType={eventType} />
+              )}
+            </>
           )}
         </div>
       </div>

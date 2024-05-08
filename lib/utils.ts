@@ -74,3 +74,44 @@ export function divideArrayInParts<T>(arreglo: Array<T>, size: number) {
   }
   return partes;
 }
+
+export function generateIntervalHours(
+  hourInit: number,
+  minuteInit: number,
+  hourEnd: number,
+  minuteEnd: number,
+  minAditional: number,
+  dateUsr: Date,
+  dateSelect: Date,
+  hourVerify: number
+) {
+  let intervals = [];
+  let hourNow = hourInit;
+  let minuteNow = minuteInit;
+
+  // As long as the current time is less than or equal to the end time
+  while (hourNow < hourEnd || (hourNow === hourEnd && minuteNow <= minuteEnd)) {
+    // Adds the current time to the interval array
+    intervals.push({ hora: hourNow, minuto: minuteNow });
+
+    // Add 15 minutes to current time
+    minuteNow += minAditional;
+
+    // If the minutes exceed 59, adjust the hour and minutes
+    if (minuteNow >= 60) {
+      minuteNow -= 60;
+      hourNow += 1;
+    }
+  }
+
+  if (
+    dateUsr.getDate() == dateSelect.getDate() &&
+    dateUsr.getMonth() &&
+    dateSelect.getMonth() &&
+    dateUsr.getFullYear() == dateSelect.getFullYear()
+  ) {
+    const hourU = dateUsr.getHours() + hourVerify;
+    return intervals.filter((v) => v.hora >= hourU);
+  }
+  return intervals;
+}

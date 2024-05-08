@@ -6,9 +6,12 @@ import {
   TypeDurationCustom,
   TypeEventFormating,
   TypeLocationEvent,
+  TypeNewEventLocation,
   TypeResultAction,
 } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
+import { getSchedulesFavorite } from "./schedules";
+import { getUserByUserName } from "./userActions";
 
 export const createNewEvent = async (
   data: DataNewEnvet,
@@ -25,6 +28,15 @@ export const createNewEvent = async (
     if (data.nameEvent.length < 2) {
       throw new Error("Please prove an event name");
     }
+
+    const scheduleAvaible = await getSchedulesFavorite(userId);
+
+    if (!scheduleAvaible) {
+      throw new Error(
+        "Availability Times not found please create and come back this!"
+      );
+    }
+
     const response = await db.eventType.create({
       data: {
         typeEvent,
@@ -33,6 +45,7 @@ export const createNewEvent = async (
         eventName: data.nameEvent,
         duration: data.duration,
         location: data.location,
+        scheduleAvailibityId: scheduleAvaible.id,
       },
     });
     return {
@@ -78,14 +91,31 @@ export const getSingleEvent = async (
       where: {
         id,
       },
+      include: {
+        scheduleAvailibity: {
+          include: {
+            scheduleWeekDays: {
+              include: {
+                scheduleHours: true,
+              },
+            },
+          },
+        },
+      },
     });
     if (!result) {
       return null;
     }
+    const user = await db.user.findUnique({
+      where: {
+        userId: result.userId,
+      },
+    });
     return {
       ...result,
       duration: result.duration as TypeDurationCustom,
-      location: result.location as TypeLocationEvent,
+      location: result.location as TypeNewEventLocation,
+      user,
     };
   } catch (error) {
     console.log("[ERROR_getSingleEvent]", error);
@@ -117,5 +147,37 @@ export const removeEventType = async (
       message: `${error}`,
       success: false,
     };
+  }
+};
+
+export const getSingleEventByName = async (
+  nameEvent: string,
+  nameUser: string
+): Promise<TypeEventFormating | null> => {
+  try {
+    const user = await getUserByUserName(nameUser);
+    if (!user) {
+      return null;
+    }
+
+    const events = await db.eventType.findMany({
+      where: {
+        userId: user.userId,
+      },
+    });
+    if (events.length == 0) {
+      return null;
+    }
+
+    const findEvne = events.find(
+      (v) => v.eventName.toLowerCase().replaceAll(" ", "-") === nameEvent
+    );
+    if (!findEvne) {
+      return null;
+    }
+
+    return await getSingleEvent(findEvne.id);
+  } catch (error) {
+    return null;
   }
 };
