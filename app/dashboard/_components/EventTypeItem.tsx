@@ -102,6 +102,8 @@ export default function EventTypeItem({ event, userId, urlUser }: Props) {
           {event.duration.time} {event.duration.format}, {event.typeEvent}
         </span>
         <Link
+          onClick={(e) => e.stopPropagation()}
+          target="_blank"
           href={linkUser}
           className="text-colorAzul hover:underline font-girloyRegular"
         >

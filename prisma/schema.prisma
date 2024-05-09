@@ -121,6 +121,10 @@ model EventType {
   duration Json
   location Json
 
+  eventLinkName    String
+  inviteQuestions  Json[]
+  linksConfirmPage Json[]
+
   scheduleAvailibityId String
   scheduleAvailibity   ScheduleM @relation(references: [id], fields: [scheduleAvailibityId], onDelete: Cascade)
 

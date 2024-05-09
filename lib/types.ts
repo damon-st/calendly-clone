@@ -151,6 +151,7 @@ export type DataNewEnvet = {
   nameEvent: string;
   duration: TypeDurationCustom;
   location: TypeNewEventLocation;
+  inviteQuestions: TypeInviteQuestions[];
 };
 
 export type TypeEventFormating = EventType & {
@@ -158,6 +159,7 @@ export type TypeEventFormating = EventType & {
   location: TypeNewEventLocation;
   user?: User | null;
   scheduleAvailibity?: ScheduleWithProps | null;
+  inviteQuestions: TypeInviteQuestions[];
 };
 
 export type ScheduleWithProps = ScheduleM & {
@@ -167,3 +169,38 @@ export type ScheduleWithProps = ScheduleM & {
 export type ScheduleTypeWithHours = ScheduleWeekdDays & {
   scheduleHours: ScheduleHoursM[];
 };
+
+type TypeInviteQuestionsDto = {
+  label: string;
+  responseTxt: string;
+  required: boolean;
+  id: string;
+  disabled: boolean;
+  active: boolean;
+  typeInput:
+    | "email"
+    | "text"
+    | "number"
+    | "checkbox"
+    | "radioButton"
+    | "textArea"
+    | "tel";
+};
+
+export type TypeInviteQuestionsNames =
+  | "oneLine"
+  | "multipleLines"
+  | "radioButtons"
+  | "checkboxes"
+  | "drowpDown"
+  | "phonNumber";
+
+export type TypeInviteQuestions =
+  | {
+      type: "oneLine";
+      data: TypeInviteQuestionsDto;
+    }
+  | {
+      type: "multipleLines";
+      data: TypeInviteQuestionsDto & {};
+    };

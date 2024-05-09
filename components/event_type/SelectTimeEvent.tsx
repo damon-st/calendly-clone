@@ -47,7 +47,7 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
           minAditional,
           new Date(),
           dateSlec,
-          2
+          4
         );
 
         for (const hm of tempG) {
@@ -102,7 +102,12 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
       </h2>
       <div className="w-full flex items-start justify-center">
         {eventType.scheduleAvailibity && (
-          <div className="w-full flex-col items-center justify-center">
+          <div
+            className={cn(
+              "w-full flex-col items-center justify-center",
+              preview && "w-[70%]"
+            )}
+          >
             <CalendarSmallCustom
               onChangeDate={onChangeDate}
               initialDate={date}

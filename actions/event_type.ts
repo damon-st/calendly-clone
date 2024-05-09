@@ -5,6 +5,7 @@ import {
   DataNewEnvet,
   TypeDurationCustom,
   TypeEventFormating,
+  TypeInviteQuestions,
   TypeLocationEvent,
   TypeNewEventLocation,
   TypeResultAction,
@@ -37,8 +38,15 @@ export const createNewEvent = async (
       );
     }
 
+    const eventLinkName = data.nameEvent
+      .toLowerCase()
+      .replaceAll(" ", "-")
+      .replaceAll(/\s+/g, "-");
+
     const response = await db.eventType.create({
       data: {
+        inviteQuestions: data.inviteQuestions,
+        eventLinkName,
         typeEvent,
         userId,
         colorEvent: data.color,
@@ -116,6 +124,7 @@ export const getSingleEvent = async (
       duration: result.duration as TypeDurationCustom,
       location: result.location as TypeNewEventLocation,
       user,
+      inviteQuestions: result.inviteQuestions as TypeInviteQuestions[],
     };
   } catch (error) {
     console.log("[ERROR_getSingleEvent]", error);
@@ -179,5 +188,42 @@ export const getSingleEventByName = async (
     return await getSingleEvent(findEvne.id);
   } catch (error) {
     return null;
+  }
+};
+
+export const onSaveChangesEventType = async (
+  idR: string,
+  data: Partial<TypeEventFormating>
+): Promise<TypeResultAction> => {
+  try {
+    const { userId: userT } = auth();
+    if (!userT) {
+      throw new Error("USER NOT FOUND");
+    }
+
+    const { scheduleAvailibity, user, id, userId, ...newDATA } = data;
+
+    await db.eventType.update({
+      where: {
+        id: idR,
+      },
+      data: {
+        colorEvent: newDATA.colorEvent,
+        eventLinkName: newDATA.eventLinkName,
+        location: newDATA.location,
+        eventName: newDATA.eventName,
+        inviteQuestions: newDATA.inviteQuestions,
+        typeEvent: newDATA.typeEvent,
+        duration: newDATA.duration,
+      },
+    });
+    return {
+      message: "update success",
+      success: true,
+    };
+  } catch (error) {
+    console.log("[ERROR_onSaveChangesEventType]", error);
+
+    return { message: `${error}`, success: false };
   }
 };

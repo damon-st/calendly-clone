@@ -13,7 +13,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +21,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import BookingPageOptionsEvent from "./BookingPageOptionsEvent";
+import { useNewEnventStore } from "@/lib/store/useNewEvent";
 
 type Props = {
   typeEvent: string;
@@ -28,11 +30,11 @@ type Props = {
 };
 
 export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
+  const { onChange } = useNewEnventStore();
+  const [showBookingSetting, setShowBookingSetting] = useState(false);
   const copyLink = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_URL}/${
-        eventType.user?.userName
-      }/${eventType.eventName.toLowerCase().replaceAll(" ", "-")}`;
+      const url = `${process.env.NEXT_PUBLIC_URL}/${eventType.user?.userName}/${eventType.eventLinkName}`;
       await navigator.clipboard.writeText(url);
       toast.success("Copy link sucess");
     } catch (error) {
@@ -41,8 +43,26 @@ export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
     }
   };
 
+  const onToggleShowBookingSetting = useCallback(() => {
+    console.log("ADSdsas");
+
+    setShowBookingSetting((p) => !p);
+  }, []);
+
+  useEffect(() => {
+    onChange({
+      ...eventType,
+    });
+  }, [eventType]);
+
   return (
-    <aside className="size-full">
+    <aside className="size-full relative">
+      {showBookingSetting && (
+        <BookingPageOptionsEvent
+          onClose={setShowBookingSetting}
+          eventType={eventType}
+        />
+      )}
       <div className=" px-6 w-full h-[15%] border-b border-gray-300 flex items-start justify-evenly flex-col">
         <div className="w-full flex items-center justify-between">
           <Link
@@ -158,6 +178,7 @@ export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
             </div>
           </button>
           <button
+            onClick={onToggleShowBookingSetting}
             type="button"
             className="w-full  border-b border-gray-300 px-6 flex pt-3 pb-3 hover:bg-colorCeleste cursor-pointer"
           >

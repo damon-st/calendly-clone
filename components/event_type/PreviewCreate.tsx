@@ -71,8 +71,6 @@ export default function PreviewCreate({ user, isCreating, eventType }: Props) {
 
   useEffect(() => {
     if (!eventType) return;
-    console.log(eventType.location);
-
     onChange({
       color: eventType.colorEvent,
       duration: eventType.duration,

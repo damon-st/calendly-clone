@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import { TypeLocationEventNames } from "../types";
+import { TypeInviteQuestions, TypeLocationEventNames } from "../types";
 
 type Data = {
   type?: TypeLocationEventNames;
+  onSaveTypeQuestion?: (type: TypeInviteQuestions) => void;
 };
 
-type TypeModal = "none" | "editLocation";
+type TypeModal = "none" | "editLocation" | "createQuestions";
 
 type ShowModal = {
   type: TypeModal;
