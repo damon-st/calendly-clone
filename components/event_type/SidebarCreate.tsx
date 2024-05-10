@@ -10,18 +10,28 @@ import { useNewEnventStore } from "@/lib/store/useNewEvent";
 import { TypeDurationCustom, TypeNewEventLocation } from "@/lib/types";
 import { ChevronLeft, Info, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
+import EventEditDescription from "./EventEditDescription";
 
 type Props = {
   typeEvent: string;
+  isEditing: boolean;
+  onCloseSide?: () => void;
+  idEvent?: string;
 };
 
-export default function SidebarCreate({ typeEvent }: Props) {
+export default function SidebarCreate({
+  typeEvent,
+  onCloseSide,
+  isEditing,
+  idEvent,
+}: Props) {
   const [isPending, startTransition] = useTransition();
   const [nameEvent, setNameEvent] = useState("");
   const [color, setColor] = useState(colorDefault[0].color);
   const [showInfoCard, setShowInfoCard] = useState(false);
+  const [descriptionInstruc, setDescriptionInstruc] = useState("");
   const router = useRouter();
   const {
     onChangeNameEvent,
@@ -31,27 +41,56 @@ export default function SidebarCreate({ typeEvent }: Props) {
     data,
     onChangeLocation,
     onSave,
+    onSaveChanges,
+    onChange: onChangeAllStore,
   } = useNewEnventStore();
   const [durationCustom, setDurationCustom] = useState<TypeDurationCustom>({
     format: "min",
     time: 0,
   });
 
+  useEffect(() => {
+    if (!isEditing) return;
+    setNameEvent(data.nameEvent);
+    setDurationCustom(data.duration);
+    setColor(data.color);
+    setDescriptionInstruc(data.descriptionInstruc);
+  }, [isEditing]);
+
   const onCancel = useCallback(() => {
-    onReset();
-    router.replace("/dashboard/new-event");
-  }, [onReset, router]);
+    if (isEditing) {
+      onCloseSide?.();
+    } else {
+      onReset();
+      router.replace("/dashboard/new-event");
+    }
+  }, [isEditing, onCloseSide, onReset, router]);
 
   const onContinue = () => {
     if (isPending) return;
     startTransition(async () => {
       try {
-        const response = await onSave(data, typeEvent);
-        if (!response.success) {
-          throw new Error(response.message);
+        if (isEditing) {
+          const response = await onSaveChanges(idEvent ?? "", {
+            colorEvent: color,
+            eventName: nameEvent,
+            location: data.location,
+            descriptionInstruc: descriptionInstruc,
+            duration: durationCustom,
+          });
+          if (!response.success) {
+            throw new Error(response.message);
+          }
+          toast.success("Changed Saved!");
+          onCloseSide?.();
+        } else {
+          const response = await onSave(data, typeEvent);
+          if (!response.success) {
+            throw new Error(response.message);
+          }
+          console.log(response.data);
+          router.push(`/edit-event/${response.data.id}`);
         }
-        console.log(response.data);
-        router.push(`/edit-event/${response.data.id}`);
       } catch (error) {
         toast.error(`${error}`);
       }
@@ -92,6 +131,16 @@ export default function SidebarCreate({ typeEvent }: Props) {
     [onChangeLocation]
   );
 
+  const handleOnChangeDescri = useCallback(
+    (v: string) => {
+      setDescriptionInstruc(v);
+      onChangeAllStore({
+        descriptionInstruc: v,
+      });
+    },
+    [onChangeAllStore]
+  );
+
   return (
     <aside className="size-full">
       <div className="w-full h-[12%] flex flex-col justify-center gap-2 border-b border-gray-300 px-6">
@@ -103,11 +152,11 @@ export default function SidebarCreate({ typeEvent }: Props) {
         >
           <ChevronLeft className="text-colorTextBlack" />
           <span className="text-colorTextBlack font-girloyBold font-bold underline">
-            Cancel
+            {isEditing ? "Event Type Summary" : "Cancel"}
           </span>
         </button>
         <h1 className="text-xl font-girloySemiBold text-colorTextBlack">
-          New Event Type
+          {isEditing ? "Event details" : "New Event Type"}
         </h1>
       </div>
       <div className="w-full h-[80%] p-6 flex flex-col gap-2 relative">
@@ -135,6 +184,13 @@ export default function SidebarCreate({ typeEvent }: Props) {
           canUseZoom={false}
           typeSelect={data.location.type.type}
         />
+        {isEditing && (
+          <EventEditDescription
+            isEditing={isEditing}
+            onChange={handleOnChangeDescri}
+            value={descriptionInstruc}
+          />
+        )}
       </div>
       <div className="w-full h-[8%] flex items-center justify-end px-6 gap-3 border-t border-gray-300">
         <Button
@@ -151,7 +207,11 @@ export default function SidebarCreate({ typeEvent }: Props) {
           variant="azul"
           className="rounded-full"
         >
-          {isPending ? <Loader2 className="text-white" /> : "Continue"}
+          {isPending ? (
+            <Loader2 className="text-white" />
+          ) : (
+            `${isEditing ? "Save and close" : "Continue"}`
+          )}
         </Button>
       </div>
     </aside>

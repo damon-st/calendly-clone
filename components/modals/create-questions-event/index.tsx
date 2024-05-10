@@ -91,7 +91,7 @@ export default function CreateQuestionsEvent({}: Props) {
         data: {
           active: isActive,
           disabled: true,
-          id: typesAswer,
+          id: `${nameQuestion}-${typesAswer}`,
           label: nameQuestion,
           required: isRequired,
           responseTxt: "",

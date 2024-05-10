@@ -47,6 +47,7 @@ const initialData: DataNewEnvet = {
       },
     },
   ],
+  descriptionInstruc: "",
 };
 
 type TypeNewEvent = {

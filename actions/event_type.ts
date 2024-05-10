@@ -169,18 +169,13 @@ export const getSingleEventByName = async (
       return null;
     }
 
-    const events = await db.eventType.findMany({
+    const findEvne = await db.eventType.findFirst({
       where: {
         userId: user.userId,
+        eventLinkName: nameEvent,
       },
     });
-    if (events.length == 0) {
-      return null;
-    }
 
-    const findEvne = events.find(
-      (v) => v.eventName.toLowerCase().replaceAll(" ", "-") === nameEvent
-    );
     if (!findEvne) {
       return null;
     }
@@ -202,7 +197,6 @@ export const onSaveChangesEventType = async (
     }
 
     const { scheduleAvailibity, user, id, userId, ...newDATA } = data;
-
     await db.eventType.update({
       where: {
         id: idR,
@@ -215,6 +209,7 @@ export const onSaveChangesEventType = async (
         inviteQuestions: newDATA.inviteQuestions,
         typeEvent: newDATA.typeEvent,
         duration: newDATA.duration,
+        descriptionInstruc: newDATA.descriptionInstruc,
       },
     });
     return {

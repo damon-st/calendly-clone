@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import BookingPageOptionsEvent from "./BookingPageOptionsEvent";
 import { useNewEnventStore } from "@/lib/store/useNewEvent";
+import SidebarCreate from "./SidebarCreate";
 
 type Props = {
   typeEvent: string;
@@ -32,6 +33,7 @@ type Props = {
 export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
   const { onChange } = useNewEnventStore();
   const [showBookingSetting, setShowBookingSetting] = useState(false);
+  const [showEventDatils, setShowEventDatils] = useState(false);
   const copyLink = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_URL}/${eventType.user?.userName}/${eventType.eventLinkName}`;
@@ -44,9 +46,11 @@ export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
   };
 
   const onToggleShowBookingSetting = useCallback(() => {
-    console.log("ADSdsas");
-
     setShowBookingSetting((p) => !p);
+  }, []);
+
+  const onToggleShowEntDails = useCallback(() => {
+    setShowEventDatils((p) => !p);
   }, []);
 
   useEffect(() => {
@@ -62,6 +66,16 @@ export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
           onClose={setShowBookingSetting}
           eventType={eventType}
         />
+      )}
+      {showEventDatils && (
+        <div className="size-full absolute z-10 bg-white">
+          <SidebarCreate
+            idEvent={eventType.id}
+            onCloseSide={onToggleShowEntDails}
+            typeEvent={typeEvent}
+            isEditing
+          />
+        </div>
       )}
       <div className=" px-6 w-full h-[15%] border-b border-gray-300 flex items-start justify-evenly flex-col">
         <div className="w-full flex items-center justify-between">
@@ -105,6 +119,7 @@ export default function SidebarEditEventType({ eventType, typeEvent }: Props) {
       <div className="w-full h-[85%] overflow-y-auto">
         <div className="w-full  flex flex-col   ">
           <button
+            onClick={onToggleShowEntDails}
             type="button"
             className="w-full  border-b border-gray-300 px-6 flex pt-3 pb-3 hover:bg-colorCeleste cursor-pointer"
           >

@@ -2,6 +2,7 @@ import { getAllSchedules } from "@/actions/schedules";
 import {
   EventType,
   Prisma,
+  ScheduleEvents,
   ScheduleHoursM,
   ScheduleM,
   ScheduleWeekdDays,
@@ -152,6 +153,7 @@ export type DataNewEnvet = {
   duration: TypeDurationCustom;
   location: TypeNewEventLocation;
   inviteQuestions: TypeInviteQuestions[];
+  descriptionInstruc: string;
 };
 
 export type TypeEventFormating = EventType & {
@@ -204,3 +206,8 @@ export type TypeInviteQuestions =
       type: "multipleLines";
       data: TypeInviteQuestionsDto & {};
     };
+
+export type TypeScheduleEventInvitation = ScheduleEvents & {
+  eventType: TypeEventFormating;
+  inviteQuestions: TypeInviteQuestions[];
+};

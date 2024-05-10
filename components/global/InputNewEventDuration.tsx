@@ -1,12 +1,6 @@
 "use client";
 import { Info } from "lucide-react";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -27,14 +21,40 @@ type Props = {
   setDurationCustom: (e: TypeDurationCustom) => void;
 };
 
+const valuesT: Array<{ label: string; value: string }> = [
+  {
+    label: "15 min",
+    value: "15",
+  },
+  {
+    label: "30 min",
+    value: "30",
+  },
+  {
+    label: "45 min",
+    value: "45",
+  },
+  {
+    label: "60 min",
+    value: "60",
+  },
+  {
+    label: "Custom",
+    value: "custom",
+  },
+];
+
 export default function InputNewEventDuration({
   durationCustom,
   setDurationCustom,
 }: Props) {
   const [openMsg, setOpenMsg] = useState(false);
-  const [duration, setDuration] = useState("15");
-
+  const [duration, setDuration] = useState(durationCustom.time.toString());
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    setDuration(durationCustom.time.toString());
+  }, [durationCustom.time]);
 
   const onValueChange = useCallback(
     (v: string) => {
@@ -98,26 +118,27 @@ export default function InputNewEventDuration({
           </PopoverContent>
         </Popover>
       </div>
-      <Select onValueChange={onValueChange}>
+      <Select
+        value={duration}
+        defaultValue={duration}
+        onValueChange={onValueChange}
+      >
         <SelectTrigger className="w-[180px] min-h-12 outline-none border border-gray-300">
-          <SelectValue className="outline-none" placeholder="15 min" />
+          <SelectValue
+            className="outline-none"
+            placeholder={`${duration} min`}
+          />
         </SelectTrigger>
         <SelectContent className="outline-none cursor-pointer">
-          <SelectItem className="cursor-pointer" value="15">
-            15 min
-          </SelectItem>
-          <SelectItem className="cursor-pointer" value="30">
-            30 min
-          </SelectItem>
-          <SelectItem className="cursor-pointer" value="45">
-            45 min
-          </SelectItem>
-          <SelectItem className="cursor-pointer" value="60">
-            60 min
-          </SelectItem>
-          <SelectItem className="cursor-pointer" value="custom">
-            Custom
-          </SelectItem>
+          {valuesT.map((b) => (
+            <SelectItem
+              key={b.value}
+              className="cursor-pointer"
+              value={b.value}
+            >
+              {b.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
       {isCustom && (

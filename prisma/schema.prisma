@@ -121,16 +121,38 @@ model EventType {
   duration Json
   location Json
 
-  eventLinkName    String
-  inviteQuestions  Json[]
-  linksConfirmPage Json[]
+  eventLinkName      String
+  inviteQuestions    Json[]
+  linksConfirmPage   Json[]
+  descriptionInstruc String @default("")
 
   scheduleAvailibityId String
   scheduleAvailibity   ScheduleM @relation(references: [id], fields: [scheduleAvailibityId], onDelete: Cascade)
+
+  scheduledEvents ScheduleEvents[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([scheduleAvailibityId])
+}
+
+model ScheduleEvents {
+  id String @id @default(uuid()) @map("_id")
+
+  inviteQuestions Json[]
+
+  dateEvent   DateTime
+  dateStr     String
+  hourStr     String
+  location    Json
+  timeZone    String
+  countryCode String
+  countryName String
+
+  idEventType String
+  eventType   EventType @relation(references: [id], fields: [idEventType], onDelete: Cascade)
+
+  @@index([idEventType])
 }

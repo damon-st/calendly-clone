@@ -20,9 +20,10 @@ import {
 type Props = {
   invite: TypeInviteQuestions;
   id: number;
+  onAction: (action: "edit" | "delete", value: TypeInviteQuestions) => void;
 };
 
-export default function InviteQuestionPreview({ invite, id }: Props) {
+export default function InviteQuestionPreview({ invite, id, onAction }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id, disabled: !invite.data.disabled, data: invite });
 
@@ -34,11 +35,13 @@ export default function InviteQuestionPreview({ invite, id }: Props) {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       className="w-full border-b border-gray-300 p-4 min-h-12 flex items-center justify-between"
     >
-      <div className="flex items-center gap-3 font-girloyRegular">
+      <div
+        {...attributes}
+        {...listeners}
+        className="flex items-center gap-3 font-girloyRegular"
+      >
         {invite.data.disabled ? (
           <GripVertical className="text-colorTextBlack cursor-move" />
         ) : (
@@ -48,16 +51,22 @@ export default function InviteQuestionPreview({ invite, id }: Props) {
       </div>
       <div>
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <MoreVertical className="text-colorTextBlack cursor-pointer" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem className="flex items-center gap-2 font-girloyRegular text-lg ">
+            <DropdownMenuItem
+              onClick={() => onAction("edit", invite)}
+              className="cursor-pointer flex items-center gap-2 font-girloyRegular text-lg pointer-events-auto "
+            >
               <Edit2Icon className="text-colorTextBlack" />
               <span>Edit</span>
             </DropdownMenuItem>
             {invite.data.disabled && (
-              <DropdownMenuItem className="flex items-center gap-2 font-girloyRegular text-lg  text-colorError">
+              <DropdownMenuItem
+                onClick={() => onAction("delete", invite)}
+                className="cursor-pointer flex items-center gap-2 font-girloyRegular text-lg  text-colorError"
+              >
                 <Trash className="text-colorError" />
                 <span>Delete</span>
               </DropdownMenuItem>

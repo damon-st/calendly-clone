@@ -1,5 +1,6 @@
 import { getSingleEventByName } from "@/actions/event_type";
 import SelectTimeEvent from "@/components/event_type/SelectTimeEvent";
+import LocationEventType from "@/components/global/LocationEventType";
 import { Clock } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -37,6 +38,12 @@ export default async function IdEventUser({ params }: Props) {
                       {eventType.duration.time} {eventType.duration.format}
                     </span>
                   </div>
+                  <LocationEventType type={eventType.location.type.type} />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: eventType.descriptionInstruc,
+                    }}
+                  ></div>
                 </div>
               </div>
               <div className="w-full flex justify-between pb-5">
@@ -52,7 +59,17 @@ export default async function IdEventUser({ params }: Props) {
               </div>
             </div>
           </div>
-          <div className="w-[60%] h-full flex items-start justify-start">
+          <div className="w-[60%] h-full flex items-start justify-start relative">
+            <a
+              href="https://calendly.com/?utm_campaign=sign_up&amp;utm_medium=badge&amp;utm_source=invitee"
+              target="_blank"
+              className="bannerCal  bannerCal2"
+            >
+              <div data-id="branding" className="brandinCal ">
+                <div className="textBranCal ">powered by</div>
+                <div className="textBranCal2 ">Calendly</div>
+              </div>
+            </a>
             <div className="size-full px-8 pt-8">
               <SelectTimeEvent preview={false} eventType={eventType} />
             </div>

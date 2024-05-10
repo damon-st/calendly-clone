@@ -75,6 +75,7 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
         }
         toast.success("Changed saved");
         router.refresh();
+        onClose(false);
       } catch (error) {
         console.log(error);
 
@@ -88,6 +89,7 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
     isPending,
     onSaveChanges,
     router,
+    onClose,
   ]);
 
   const onCreateQuestionDialg = () => {
@@ -98,7 +100,6 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
           temp.push(type);
           return temp;
         });
-        onSave();
       },
     });
   };
@@ -125,6 +126,19 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
       setInviteQuestions(tempE);
     }
   };
+
+  const onActionInviteQuesiton = useCallback(
+    (action: "edit" | "delete", value: TypeInviteQuestions) => {
+      if (action == "delete") {
+        setInviteQuestions((p) => {
+          let temp = [...p];
+          temp = temp.filter((v) => v != value);
+          return temp;
+        });
+      }
+    },
+    []
+  );
 
   return (
     <div className="size-full absolute top-0 bg-white z-50">
@@ -209,7 +223,12 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
                 strategy={verticalListSortingStrategy}
               >
                 {inviteQuestions.map((v: TypeInviteQuestions, i) => (
-                  <InviteQuestionPreview key={i} invite={v} id={i} />
+                  <InviteQuestionPreview
+                    onAction={onActionInviteQuesiton}
+                    key={i}
+                    invite={v}
+                    id={i}
+                  />
                 ))}
               </SortableContext>
             </DndContext>

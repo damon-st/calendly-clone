@@ -16,7 +16,7 @@ export default async function CreateEventPage({ params }: Props) {
   return (
     <main className="size-full bg-colorGrisDash flex">
       <div className="w-[30%] h-full bg-white border-r border-gray-300">
-        <SidebarCreate typeEvent={params.typeEvent} />
+        <SidebarCreate isEditing={false} typeEvent={params.typeEvent} />
       </div>
       <div className="w-[70%] h-full">
         <PreviewCreate user={user} isCreating />

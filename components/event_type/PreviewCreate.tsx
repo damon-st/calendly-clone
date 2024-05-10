@@ -5,7 +5,6 @@ import { Clock, MapPin, Phone, Video } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import SelectTimeEvent from "./SelectTimeEvent";
 import { TypeEventFormating } from "@/lib/types";
-
 type Props = {
   user?: User | null;
   isCreating: boolean;
@@ -76,6 +75,8 @@ export default function PreviewCreate({ user, isCreating, eventType }: Props) {
       duration: eventType.duration,
       nameEvent: eventType.eventName,
       location: eventType.location,
+      descriptionInstruc: eventType.descriptionInstruc,
+      inviteQuestions: eventType.inviteQuestions,
     });
   }, [eventType]);
 
@@ -100,6 +101,10 @@ export default function PreviewCreate({ user, isCreating, eventType }: Props) {
               {typeLocation}
             </div>
           </div>
+          <div
+            className="flex flex-col items-start w-full max-w-[640px] overflow-hidden"
+            dangerouslySetInnerHTML={{ __html: data.descriptionInstruc }}
+          ></div>
         </div>
         <div className="flex flex-1 flex-col w-full h-auto items-center justify-center px-4">
           {isCreating ? (

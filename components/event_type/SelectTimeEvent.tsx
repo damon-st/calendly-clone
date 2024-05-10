@@ -5,6 +5,7 @@ import CalendarSmallCustom from "../calendar/CalendarSmallCustom";
 import { ChevronDown, Earth, Loader2 } from "lucide-react";
 import { format, setHours } from "date-fns";
 import { cn, formatHourMin, generateIntervalHours } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   eventType: TypeEventFormating;
@@ -19,6 +20,8 @@ type Hours = {
 };
 
 export default function SelectTimeEvent({ eventType, preview }: Props) {
+  const router = useRouter();
+  const pathName = usePathname();
   const [date, setDate] = React.useState<Date>(new Date());
   const [dateSelect, setDateSelect] = useState<Date | null>(null);
   const loadingHours = useRef(false);
@@ -95,6 +98,25 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
     [preview]
   );
 
+  const onConfirmHour = useCallback(
+    (h: Hours) => {
+      const tempDate = new Date(
+        dateSelect!.getFullYear(),
+        dateSelect!.getMonth(),
+        dateSelect?.getDate(),
+        h.hour,
+        h.min
+      );
+      const dateF = format(dateSelect!, "yyyy-MM-dd");
+      const formatDateT = tempDate.toISOString();
+      const url = `${pathName}/${formatDateT}?date=${dateF}&hour=${JSON.stringify(
+        h
+      )}`;
+      router.push(url);
+    },
+    [dateSelect, pathName, router]
+  );
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <h2 className="text-colorTextBlack font-girloyBold text-xl">
@@ -157,6 +179,7 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
                   <span>{v.label}</span>
                 </div>
                 <button
+                  onClick={() => onConfirmHour(v)}
                   type="button"
                   className={cn(
                     "w-0 overflow-hidden min-h-14 bg-colorAzul text-white rounded-sm  items-center justify-center flex font-girloyBold text-lg transition-width",
