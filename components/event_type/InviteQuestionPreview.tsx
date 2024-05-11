@@ -20,7 +20,11 @@ import {
 type Props = {
   invite: TypeInviteQuestions;
   id: number;
-  onAction: (action: "edit" | "delete", value: TypeInviteQuestions) => void;
+  onAction: (
+    action: "edit" | "delete",
+    value: TypeInviteQuestions,
+    id: number
+  ) => void;
 };
 
 export default function InviteQuestionPreview({ invite, id, onAction }: Props) {
@@ -56,7 +60,7 @@ export default function InviteQuestionPreview({ invite, id, onAction }: Props) {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem
-              onClick={() => onAction("edit", invite)}
+              onClick={() => onAction("edit", invite, id)}
               className="cursor-pointer flex items-center gap-2 font-girloyRegular text-lg pointer-events-auto "
             >
               <Edit2Icon className="text-colorTextBlack" />
@@ -64,7 +68,7 @@ export default function InviteQuestionPreview({ invite, id, onAction }: Props) {
             </DropdownMenuItem>
             {invite.data.disabled && (
               <DropdownMenuItem
-                onClick={() => onAction("delete", invite)}
+                onClick={() => onAction("delete", invite, id)}
                 className="cursor-pointer flex items-center gap-2 font-girloyRegular text-lg  text-colorError"
               >
                 <Trash className="text-colorError" />
@@ -72,8 +76,6 @@ export default function InviteQuestionPreview({ invite, id, onAction }: Props) {
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

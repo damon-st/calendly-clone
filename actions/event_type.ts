@@ -79,10 +79,8 @@ export const getAllEvents = async () => {
       },
     });
     return result.map((e) => {
-      return {
+      return <TypeEventFormating>{
         ...e,
-        duration: e.duration as TypeDurationCustom,
-        location: e.location as TypeLocationEvent,
       };
     });
   } catch (error) {

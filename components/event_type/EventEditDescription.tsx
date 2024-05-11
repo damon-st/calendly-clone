@@ -28,7 +28,7 @@ export default function EventEditDescription({
   );
 
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3 z-10">
       <p className="text-colorTextBlack flex items-center gap-3 font-girloySemiBold">
         Description/Instructions
         <Popover open={showInfo} onOpenChange={setShowInfo}>

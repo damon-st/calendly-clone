@@ -208,7 +208,7 @@ export default function SidebarCreate({
           className="rounded-full"
         >
           {isPending ? (
-            <Loader2 className="text-white" />
+            <Loader2 className="text-white animate-spin" />
           ) : (
             `${isEditing ? "Save and close" : "Continue"}`
           )}

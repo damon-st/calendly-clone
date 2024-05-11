@@ -186,7 +186,13 @@ type TypeInviteQuestionsDto = {
     | "checkbox"
     | "radioButton"
     | "textArea"
-    | "tel";
+    | "tel"
+    | "drowdown";
+};
+
+export type TypeQuestionSelection = {
+  label: string;
+  selected: boolean;
 };
 
 export type TypeInviteQuestionsNames =
@@ -205,9 +211,41 @@ export type TypeInviteQuestions =
   | {
       type: "multipleLines";
       data: TypeInviteQuestionsDto & {};
+    }
+  | {
+      type: "radioButtons";
+      data: TypeInviteQuestionsDto & {
+        options: TypeQuestionSelection[];
+      };
+    }
+  | {
+      type: "checkboxes";
+      data: TypeInviteQuestionsDto & {
+        options: TypeQuestionSelection[];
+      };
+    }
+  | {
+      type: "drowpDown";
+      data: TypeInviteQuestionsDto & {
+        options: TypeQuestionSelection[];
+      };
+    }
+  | {
+      type: "phonNumber";
+      data: TypeInviteQuestionsDto & {
+        country?: string;
+        phone?: string;
+      };
     };
 
 export type TypeScheduleEventInvitation = ScheduleEvents & {
   eventType: TypeEventFormating;
   inviteQuestions: TypeInviteQuestions[];
+  location: TypeNewEventLocation;
+};
+
+export type ScheduleEventSearch = "upcoming" | "pending" | "past" | "dateRange";
+export type DateRange = {
+  from: Date | undefined;
+  to?: Date | undefined;
 };

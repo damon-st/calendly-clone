@@ -12,7 +12,7 @@ type Props = {
 export default async function EventsTypeList({ user, urlUser }: Props) {
   const eventLists = await getAllEvents();
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
       {eventLists.map((e) => (
         <EventTypeItem
           urlUser={urlUser}

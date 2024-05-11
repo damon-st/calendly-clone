@@ -128,16 +128,27 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
   };
 
   const onActionInviteQuesiton = useCallback(
-    (action: "edit" | "delete", value: TypeInviteQuestions) => {
+    (action: "edit" | "delete", value: TypeInviteQuestions, index: number) => {
       if (action == "delete") {
         setInviteQuestions((p) => {
           let temp = [...p];
           temp = temp.filter((v) => v != value);
           return temp;
         });
+      } else if (action == "edit") {
+        onOpen("createQuestions", {
+          onSaveTypeQuestion(type) {
+            setInviteQuestions((p) => {
+              let temp = [...p];
+              temp[index] = type;
+              return temp;
+            });
+          },
+          typeInvite: value,
+        });
       }
     },
-    []
+    [onOpen]
   );
 
   return (
@@ -158,7 +169,7 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
           Booking page options
         </h2>
       </div>
-      <div className="w-full h-[75%] px-6 flex flex-col gap-2">
+      <div className="w-full h-[75%] px-6 flex flex-col gap-2 overflow-y-auto">
         <div className="w-full mt-3">
           <p className="text-colorTextBlack font-girloyBold text-3xl">
             Booking page options
@@ -243,7 +254,7 @@ export default function BookingPageOptionsEvent({ eventType, onClose }: Props) {
           </button>
         </div>
       </div>
-      <div className="w-full h-[10%] flex items-center justify-end px-6 border-t border-gray-300 gap-4">
+      <div className="w-full h-[10%] flex items-center justify-end px-6 border-t border-gray-300 gap-4 bg-white z-10">
         <Button
           disabled={isPending}
           type="button"

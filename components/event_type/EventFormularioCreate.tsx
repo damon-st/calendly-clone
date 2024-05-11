@@ -108,7 +108,7 @@ export default function EventFormularioCreate({ dateEvent, eventType }: Props) {
         type="submit"
         variant="azul"
         size="lg"
-        className="rounded-full"
+        className="rounded-full mb-2"
       >
         {isPending ? (
           <Loader2 className="text-white animate-spin" />

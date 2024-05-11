@@ -79,7 +79,7 @@ export default async function PageEventConfirm({ params }: Props) {
             </div>
           </div>
         </div>
-        <div className="w-[60%] h-full relative ">
+        <div className="w-[60%] h-full relative overflow-y-auto overflow-x-hidden">
           <a
             href="https://calendly.com/?utm_campaign=sign_up&amp;utm_medium=badge&amp;utm_source=invitee"
             target="_blank"

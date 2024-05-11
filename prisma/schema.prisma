@@ -151,8 +151,13 @@ model ScheduleEvents {
   countryCode String
   countryName String
 
+  meetingNotes String @default("")
+
   idEventType String
   eventType   EventType @relation(references: [id], fields: [idEventType], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([idEventType])
 }

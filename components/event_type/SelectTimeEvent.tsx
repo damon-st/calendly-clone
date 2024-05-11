@@ -1,11 +1,18 @@
 "use client";
 import { ScheduleTypeWithHours, TypeEventFormating } from "@/lib/types";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import CalendarSmallCustom from "../calendar/CalendarSmallCustom";
 import { ChevronDown, Earth, Loader2 } from "lucide-react";
 import { format, setHours } from "date-fns";
 import { cn, formatHourMin, generateIntervalHours } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
+import { getSchedulesEventInvitationWhereTime } from "@/actions/schedule_events";
 
 type Props = {
   eventType: TypeEventFormating;
@@ -20,6 +27,7 @@ type Hours = {
 };
 
 export default function SelectTimeEvent({ eventType, preview }: Props) {
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const pathName = usePathname();
   const [date, setDate] = React.useState<Date>(new Date());
@@ -31,40 +39,55 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
   const onGeneretaHours = useCallback(
     (dateSlec: Date, weekDate?: ScheduleTypeWithHours) => {
       if (!weekDate) return;
-      loadingHours.current = true;
+      startTransition(async () => {
+        try {
+          loadingHours.current = true;
+          const response = await getSchedulesEventInvitationWhereTime(
+            eventType.id,
+            dateSlec
+          );
+          const timeInterval = eventType.duration.time;
+          const timeIntervalFormat = eventType.duration.format;
+          const minAditional =
+            timeIntervalFormat == "min" ? timeInterval : timeInterval * 60;
+          let tempHours: Array<Hours> = [];
 
-      const timeInterval = eventType.duration.time;
-      const timeIntervalFormat = eventType.duration.format;
-      const minAditional =
-        timeIntervalFormat == "min" ? timeInterval : timeInterval * 60;
-      let tempHours: Array<Hours> = [];
+          for (const iterator of weekDate.scheduleHours) {
+            let hourInit = iterator.hourInit;
+            const hourEnd = iterator.hourEnd;
+            const tempG = generateIntervalHours(
+              hourInit,
+              iterator.minuteInit,
+              hourEnd,
+              iterator.minuteEnd,
+              minAditional,
+              new Date(),
+              dateSlec,
+              4
+            );
 
-      for (const iterator of weekDate.scheduleHours) {
-        let hourInit = iterator.hourInit;
-        const hourEnd = iterator.hourEnd;
-        const tempG = generateIntervalHours(
-          hourInit,
-          iterator.minuteInit,
-          hourEnd,
-          iterator.minuteEnd,
-          minAditional,
-          new Date(),
-          dateSlec,
-          4
-        );
+            for (const hm of tempG) {
+              const label = `${formatHourMin(hm.hora)}:${formatHourMin(
+                hm.minuto
+              )}`;
+              const exitPrev = response.some((v) => v.hourStr === label);
+              if (exitPrev) continue;
+              tempHours.push({
+                hour: hm.hora,
+                label: label,
+                min: hm.minuto,
+                selected: false,
+              });
+            }
+          }
 
-        for (const hm of tempG) {
-          tempHours.push({
-            hour: hm.hora,
-            label: `${formatHourMin(hm.hora)}:${formatHourMin(hm.minuto)}`,
-            min: hm.minuto,
-            selected: false,
-          });
+          setTimeHours(tempHours);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          loadingHours.current = false;
         }
-      }
-
-      setTimeHours(tempHours);
-      loadingHours.current = false;
+      });
     },
     [eventType.duration.format, eventType.duration.time]
   );
@@ -155,7 +178,7 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
         )}
         {dateSelect && (
           <div className="flex flex-col items-center max-h-[60vh] pt-8 relative overflow-y-auto min-w-[200px]">
-            {loadingHours.current && (
+            {(loadingHours.current || isPending) && (
               <div className="absolute bg-black/10 rounded-lg flex items-center justify-center size-full ">
                 <Loader2 className="text-black animate-spin" size={30} />
               </div>

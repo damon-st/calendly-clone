@@ -1,6 +1,6 @@
 "use client";
 import { useShowModal } from "@/lib/store/useShowModal";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TypeInviteQuestionsNames } from "@/lib/types";
+import { TypeInviteQuestionsNames, TypeQuestionSelection } from "@/lib/types";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import CreateQuestionCheckbox from "./CreateQuestionCheckbox";
 
 type Props = {};
 
@@ -40,7 +41,7 @@ const typesAswerList: Array<{
     value: "radioButtons",
   },
   {
-    label: "Checkboxex",
+    label: "Checkboxes",
     value: "checkboxes",
   },
   {
@@ -53,15 +54,40 @@ const typesAswerList: Array<{
   },
 ];
 
+const intialValuesCheck: TypeQuestionSelection[] = [
+  {
+    label: "",
+    selected: false,
+  },
+  {
+    label: "",
+    selected: false,
+  },
+  {
+    label: "",
+    selected: false,
+  },
+];
+
 export default function CreateQuestionsEvent({}: Props) {
   const { isOpen, type, onClose, data } = useShowModal();
   const open = isOpen && type === "createQuestions";
   const [isRequired, setIsRequired] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [typesAswer, setTypesAswer] = useState(typesAswerList[0].value);
+  const [optionsDrowpDown, setOptionsDrowpDown] = useState(intialValuesCheck);
+  const [optionsCheckBox, setOptionsCheckBox] = useState(intialValuesCheck);
+  const [optionsRadioButton, setoptionsRadioButton] =
+    useState(intialValuesCheck);
   const handleClose = useCallback(
     (v: boolean) => {
       setNameQuestion("");
+      setOptionsCheckBox(intialValuesCheck);
+      setoptionsRadioButton(intialValuesCheck);
+      setOptionsDrowpDown(intialValuesCheck);
+      setIsRequired(false);
+      setIsActive(true);
+      setTypesAswer("oneLine");
       onClose();
     },
     [onClose]
@@ -74,20 +100,35 @@ export default function CreateQuestionsEvent({}: Props) {
     []
   );
 
-  const handleChangeIsRequired = useCallback((v: boolean) => {
-    setIsRequired(v);
-  }, []);
-  const handleChangeIsActive = useCallback((v: boolean) => {
-    setIsActive(v);
-  }, []);
+  const handleChangeIsRequired = useCallback(
+    (v: boolean) => {
+      if (data?.typeInvite && !data.typeInvite.data.disabled) return;
+
+      setIsRequired(v);
+    },
+    [data?.typeInvite]
+  );
+  const handleChangeIsActive = useCallback(
+    (v: boolean) => {
+      if (data?.typeInvite && !data.typeInvite.data.disabled) return;
+      setIsActive(v);
+    },
+    [data?.typeInvite]
+  );
 
   const [nameQuestion, setNameQuestion] = useState("");
 
   const onSave = () => {
     if (nameQuestion.length < 2) return;
-    if (typesAswer == "oneLine" && data && data.onSaveTypeQuestion) {
+    if (
+      (typesAswer == "oneLine" ||
+        typesAswer == "multipleLines" ||
+        typesAswer == "phonNumber") &&
+      data &&
+      data.onSaveTypeQuestion
+    ) {
       data.onSaveTypeQuestion!({
-        type: "oneLine",
+        type: typesAswer,
         data: {
           active: isActive,
           disabled: true,
@@ -98,9 +139,83 @@ export default function CreateQuestionsEvent({}: Props) {
           typeInput: "text",
         },
       });
+    } else if (
+      (typesAswer == "radioButtons" ||
+        typesAswer == "checkboxes" ||
+        typesAswer == "drowpDown") &&
+      data &&
+      data.onSaveTypeQuestion
+    ) {
+      data.onSaveTypeQuestion!({
+        type: typesAswer,
+        data: {
+          active: isActive,
+          disabled: true,
+          id: `${nameQuestion}-${typesAswer}`,
+          label: nameQuestion,
+          required: isRequired,
+          responseTxt: "",
+          typeInput:
+            typesAswer == "checkboxes"
+              ? "checkbox"
+              : typesAswer == "drowpDown"
+              ? "drowdown"
+              : "radioButton",
+          options:
+            typesAswer == "checkboxes"
+              ? optionsCheckBox
+              : typesAswer == "drowpDown"
+              ? optionsDrowpDown
+              : optionsRadioButton,
+        },
+      });
     }
     handleClose(true);
   };
+
+  const typeAwserElement = useMemo(() => {
+    if (typesAswer == "radioButtons") {
+      return (
+        <CreateQuestionCheckbox
+          optionsCheckBox={optionsRadioButton}
+          setOptionsCheckBox={setoptionsRadioButton}
+        />
+      );
+    } else if (typesAswer === "checkboxes") {
+      return (
+        <CreateQuestionCheckbox
+          optionsCheckBox={optionsCheckBox}
+          setOptionsCheckBox={setOptionsCheckBox}
+        />
+      );
+    } else if (typesAswer === "drowpDown") {
+      return (
+        <CreateQuestionCheckbox
+          optionsCheckBox={optionsDrowpDown}
+          setOptionsCheckBox={setOptionsDrowpDown}
+        />
+      );
+    }
+    return null;
+  }, [optionsCheckBox, optionsDrowpDown, optionsRadioButton, typesAswer]);
+
+  useEffect(() => {
+    if (!data) return;
+    if (!data.typeInvite) return;
+    if (data.typeInvite.type === "radioButtons") {
+      setoptionsRadioButton(data.typeInvite.data.options);
+    }
+    if (data.typeInvite.type === "checkboxes") {
+      setOptionsCheckBox(data.typeInvite.data.options);
+    }
+    if (data.typeInvite.type === "drowpDown") {
+      setOptionsDrowpDown(data.typeInvite.data.options);
+    }
+    setTypesAswer(data.typeInvite.type);
+    setNameQuestion(data.typeInvite.data.label);
+    setIsActive(data.typeInvite.data.active);
+    setIsRequired(data.typeInvite.data.required);
+  }, [data]);
 
   if (!open) {
     return null;
@@ -126,16 +241,19 @@ export default function CreateQuestionsEvent({}: Props) {
             <Checkbox
               id="requiredItem"
               onCheckedChange={handleChangeIsRequired}
+              checked={isRequired}
+              className="data-[state=checked]:bg-colorAzul"
             />
             <label
               htmlFor="requiredItem"
-              className="text-lg font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-girloyRegular"
+              className="text-lg font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-girloyRegular cursor-pointer"
             >
               Requierd
             </label>
           </div>
           <p className="font-girloyBold text-lg">Answer Type</p>
           <Select
+            value={typesAswer}
             onValueChange={(e) => setTypesAswer(e as TypeInviteQuestionsNames)}
           >
             <SelectTrigger className="w-full min-h-12 border border-gray-300 text-lg">
@@ -153,6 +271,7 @@ export default function CreateQuestionsEvent({}: Props) {
               ))}
             </SelectContent>
           </Select>
+          {typeAwserElement}
           <div className="mt-2 w-full">
             <p className="text-lg font-girloySemiBold text-colorTextBlack mb-2">
               Status

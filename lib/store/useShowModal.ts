@@ -4,6 +4,7 @@ import { TypeInviteQuestions, TypeLocationEventNames } from "../types";
 type Data = {
   type?: TypeLocationEventNames;
   onSaveTypeQuestion?: (type: TypeInviteQuestions) => void;
+  typeInvite?: TypeInviteQuestions;
 };
 
 type TypeModal = "none" | "editLocation" | "createQuestions";

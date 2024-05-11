@@ -492,3 +492,16 @@ html,body,:root{
 .bannerCal.bannerCal2:hover, .bannerCal.bannerCal2:focus {
   transform: scale(1.04);
 }
+
+.dayHeader {
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-grey-3,#CCCCCC);
+    border-bottom: 1px solid var(--color-grey-3,#CCCCCC);
+    background-color: var(--color-bg-grey-2,#FAFAFA);
+    font-size: 16px;
+}
+
+.scheduleEventGris {
+  display: grid;
+  grid-template-columns: 25% 75%;
+}
