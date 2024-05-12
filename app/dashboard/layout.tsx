@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import Sidebar from "./_components/Sidebar";
-import Navbar from "./_components/Navbar";
+import Navbar from "@/components/global/NavbarDashboard";
 type Props = {
   children: React.ReactNode;
 };
@@ -22,8 +22,7 @@ export default async function DashboardLayout({ children }: Props) {
   }
   return (
     <main className="size-full bg-colorGrisDash flex">
-      <Sidebar />
-
+      <Sidebar user={user} />
       <section className="w-full flex flex-col flex-1 transition-all duration-500 ">
         <Navbar user={user} />
         <section className="w-full flex items-start justify-center flex-col max-w-[1264px] px-8 overflow-auto">

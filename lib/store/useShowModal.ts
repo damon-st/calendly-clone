@@ -5,9 +5,15 @@ type Data = {
   type?: TypeLocationEventNames;
   onSaveTypeQuestion?: (type: TypeInviteQuestions) => void;
   typeInvite?: TypeInviteQuestions;
+  file?: File;
+  onCropImage?: (file: File) => void;
 };
 
-type TypeModal = "none" | "editLocation" | "createQuestions";
+type TypeModal =
+  | "none"
+  | "editLocation"
+  | "createQuestions"
+  | "changeImgProfile";
 
 type ShowModal = {
   type: TypeModal;

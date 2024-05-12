@@ -27,6 +27,7 @@ import { useRemoveAvailability } from "@/lib/store/useRemoveAvailability";
 import { toast } from "sonner";
 import { makeDefautlScheduleAvailability } from "@/actions/schedules";
 import CalendarCustom from "@/components/calendar/CalendarCustom";
+import ActiveEventsAvialibility from "./ActiveEventsAvialibility";
 
 type Props = {
   userId: string;
@@ -201,13 +202,9 @@ export default function SchedulesList({ schedules, userId }: Props) {
             <div className="w-full flex justify-between items-center">
               <div>
                 <div className="flex gap-4">
-                  <div className="flex flex-col gap-2">
-                    <span className="font-semibold">Active on</span>
-                    <button className="text-colorAzul flex items-center gap-2 font-girloyRegular">
-                      <span>0 Event Type</span>
-                      <ChevronDown className="text-colorAzul" />
-                    </button>
-                  </div>
+                  <ActiveEventsAvialibility
+                    events={scheduleSelect.eventTypes}
+                  />
                   <div className="flex flex-col gap-2">
                     <span className="font-semibold">Time zone</span>
                     <button className="text-colorAzul flex items-center gap-2 font-girloyRegular">

@@ -15,6 +15,7 @@ export const getAllSchedules = async (userId: string) => {
         userId,
       },
       include: {
+        eventTypes: true,
         scheduleWeekDays: {
           include: {
             scheduleHours: true,

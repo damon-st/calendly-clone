@@ -1,6 +1,7 @@
 import { getAllSchedules } from "@/actions/schedules";
 import {
   EventType,
+  IntroInfo,
   Prisma,
   ScheduleEvents,
   ScheduleHoursM,
@@ -248,4 +249,15 @@ export type ScheduleEventSearch = "upcoming" | "pending" | "past" | "dateRange";
 export type DateRange = {
   from: Date | undefined;
   to?: Date | undefined;
+};
+
+export type CountryInfoUser = {
+  countryCode: string;
+  timezone: string;
+  countryName: string;
+};
+
+export type UserInfo = User & {
+  countryInfo?: CountryInfoUser | null;
+  introInfo?: IntroInfo | null;
 };

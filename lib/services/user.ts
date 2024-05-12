@@ -1,9 +1,10 @@
 import { db } from "../db";
 import { UserDto } from "../models/user.dto";
+import { UserInfo } from "../types";
 
-export const existUser = async (userId: string) => {
+export const existUser = async (userId: string): Promise<UserInfo | null> => {
   try {
-    return await db.user.findUnique({
+    const user = await db.user.findUnique({
       where: {
         userId,
       },
@@ -11,10 +12,16 @@ export const existUser = async (userId: string) => {
         introInfo: true,
       },
     });
+    if (!user) {
+      return null;
+    }
+    return <UserInfo>{
+      ...user,
+    };
   } catch (error) {
     console.log("[ERROR_VERIFY_EXITS]", error);
 
-    return undefined;
+    return null;
   }
 };
 

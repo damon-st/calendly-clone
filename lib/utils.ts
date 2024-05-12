@@ -123,3 +123,22 @@ export const compareDates = (date1: Date, date2: Date) => {
     date1.getDate() === date2.getDate()
   );
 };
+
+export function excludeNulls<T>(data: Partial<T>) {
+  const nuevoObjeto: any = {};
+  for (const [clave, valor] of Object.entries(data)) {
+    if (valor !== undefined && valor !== null) {
+      nuevoObjeto[clave] = valor;
+    }
+  }
+  return nuevoObjeto;
+}
+
+export function fomarmatHourTimezon(date: Date, timeZone: string) {
+  return date.toLocaleString("en-US", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: false,
+  });
+}

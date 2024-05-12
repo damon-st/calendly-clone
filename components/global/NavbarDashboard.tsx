@@ -14,7 +14,6 @@ import {
   ChevronDown,
   InfoIcon,
   LinkIcon,
-  LogOut,
   MoreVertical,
   Star,
   UserPlus2Icon,
@@ -41,7 +40,9 @@ export default function Navbar({ user }: Props) {
             <div className="flex gap-2 items-center cursor-pointer outline-none">
               <Avatar>
                 <AvatarImage src={user.imageUrl ?? ""} />
-                <AvatarFallback>{user.name ?? ""}</AvatarFallback>
+                <AvatarFallback>
+                  {user.name?.substring(0, 2) ?? ""}
+                </AvatarFallback>
               </Avatar>
 
               <ChevronDown className="text-colorText" />
@@ -94,12 +95,14 @@ export default function Navbar({ user }: Props) {
                 <span>Calendar sync</span>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer hover:bg-colorAzul/10 pt-4 pb-4">
-              <div className="flex gap-4 items-center text-colorTextBlack font-girloySemiBold">
-                <MoreVertical className="text-colorTextBlack" />
-                <span>All settings</span>
-              </div>
-            </DropdownMenuItem>
+            <Link href="/personal">
+              <DropdownMenuItem className="cursor-pointer hover:bg-colorAzul/10 pt-4 pb-4">
+                <div className="flex gap-4 items-center text-colorTextBlack font-girloySemiBold">
+                  <MoreVertical className="text-colorTextBlack" />
+                  <span>All settings</span>
+                </div>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator className="bg-gray-300" />
             <DropdownMenuLabel className="text-colorTextGris font-girloySemiBold">
               RESOURCES

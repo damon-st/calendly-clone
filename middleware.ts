@@ -5,6 +5,7 @@ const isProetecedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/create-event(.*)",
   "/edit-event(.*)",
+  "/personal(.*)",
 ]);
 
 export default clerkMiddleware((auth, req) => {

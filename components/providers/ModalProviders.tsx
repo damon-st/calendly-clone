@@ -4,6 +4,7 @@ import EditNameAviabilityModal from "../modals/EditNameAviabilityModal";
 import RemoveAvailabilityModal from "../modals/RemoveAvailabilityModal";
 import EditLocationModal from "../modals/edit_location_modal/EditLocationModal";
 import CreateQuestionsEvent from "../modals/create-questions-event";
+import CropImageModal from "../modals/CropImageModal";
 
 type Props = {};
 
@@ -21,6 +22,7 @@ export default function ModalProviders({}: Props) {
       <RemoveAvailabilityModal />
       <EditLocationModal />
       <CreateQuestionsEvent />
+      <CropImageModal />
     </>
   );
 }
