@@ -257,7 +257,14 @@ export type CountryInfoUser = {
   countryName: string;
 };
 
+export type BrandingInfoUser = {
+  applyAll: boolean;
+  logoUrl?: string;
+  useCalendlyBrading: boolean;
+};
+
 export type UserInfo = User & {
   countryInfo?: CountryInfoUser | null;
   introInfo?: IntroInfo | null;
+  brandingInfo?: BrandingInfoUser | null;
 };

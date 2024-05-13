@@ -25,7 +25,8 @@ model User {
 
   welcomeMsg String @default("Welcome to my scheduling page. Please follow the instructions to add an event to my calendar.")
 
-  countryInfo Json?
+  countryInfo  Json?
+  brandingInfo Json?
 
   introInfoId String?
   introInfo   IntroInfo? @relation(fields: [introInfoId], references: [id], onDelete: Cascade)

@@ -38,7 +38,8 @@ export const updateCountryUser = async (
 
 export const updateInfoUser = async (
   data: Partial<UserInfo>,
-  formData?: FormData
+  formData?: FormData,
+  isBranding: boolean = false
 ): Promise<TypeResultAction> => {
   try {
     const { userId: userIdU } = auth();
@@ -51,7 +52,11 @@ export const updateInfoUser = async (
     if (formData) {
       const files = formData.get("files");
       const response = await utapi.uploadFiles(files as any);
-      imageUrl = response.data?.url ?? imageUrl;
+      if (isBranding) {
+        oldData.brandingInfo!.logoUrl = response.data?.url;
+      } else {
+        imageUrl = response.data?.url ?? imageUrl;
+      }
     }
 
     const user = await db.user.update({
@@ -67,6 +72,45 @@ export const updateInfoUser = async (
       message: "Update data success",
       success: true,
       data: user,
+    };
+  } catch (error) {
+    return {
+      message: `${error}`,
+      success: false,
+    };
+  }
+};
+export const updateUserName = async (
+  userName: string
+): Promise<TypeResultAction> => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+
+    const existUser = await db.user.findFirst({
+      where: {
+        userName,
+      },
+    });
+
+    if (existUser) {
+      if (existUser.userId !== userId) {
+        throw new Error("URL LINK AREADY EXITS PLEASE CHOUSE OTHER");
+      }
+    }
+    await db.user.update({
+      where: {
+        userId,
+      },
+      data: {
+        userName,
+      },
+    });
+    return {
+      message: "Update data",
+      success: true,
     };
   } catch (error) {
     return {
