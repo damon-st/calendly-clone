@@ -9,6 +9,7 @@ import {
   TypeLocationEvent,
   TypeNewEventLocation,
   TypeResultAction,
+  UserInfo,
 } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
 import { getSchedulesFavorite } from "./schedules";
@@ -67,6 +68,24 @@ export const createNewEvent = async (
   }
 };
 
+export const getAllEventsByUserId = async (userId: string) => {
+  try {
+    const result = await db.eventType.findMany({
+      where: {
+        userId,
+      },
+    });
+    return result.map((e) => {
+      return <TypeEventFormating>{
+        ...e,
+      };
+    });
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
 export const getAllEvents = async () => {
   try {
     const { userId } = auth();
@@ -121,8 +140,8 @@ export const getSingleEvent = async (
       ...result,
       duration: result.duration as TypeDurationCustom,
       location: result.location as TypeNewEventLocation,
-      user,
       inviteQuestions: result.inviteQuestions as TypeInviteQuestions[],
+      user: user as UserInfo,
     };
   } catch (error) {
     console.log("[ERROR_getSingleEvent]", error);

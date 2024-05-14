@@ -177,7 +177,7 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
           </div>
         )}
         {dateSelect && (
-          <div className="flex flex-col items-center max-h-[60vh] pt-8 relative overflow-y-auto min-w-[200px]">
+          <div className="flex flex-col items-center min-h-[200px] max-h-[60vh] pt-8 relative overflow-y-auto min-w-[200px]">
             {(loadingHours.current || isPending) && (
               <div className="absolute bg-black/10 rounded-lg flex items-center justify-center size-full ">
                 <Loader2 className="text-black animate-spin" size={30} />

@@ -73,17 +73,17 @@ const links2: Array<TypeLinks> = [
     isNew: true,
   },
   {
-    href: "/workflows-user",
+    href: "/dashboard/workflows-user",
     title: "Workflows",
     icon: Share2,
   },
   {
-    href: "/integrations-user",
+    href: "/dashboard/integrations-user",
     title: "Integrations & apps",
     icon: LayoutGrid,
   },
   {
-    href: "/routing-forms-user",
+    href: "/dashboard/routing-forms-user",
     title: "Routing",
     icon: RouteIcon,
   },

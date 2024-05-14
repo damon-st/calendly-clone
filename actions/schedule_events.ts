@@ -1,5 +1,5 @@
 "use server";
-
+import { google } from "googleapis";
 import { db } from "@/lib/db";
 import {
   DateRange,
@@ -37,6 +37,9 @@ export const createScheduleEvent = async (
         inviteQuestions: type.inviteQuestions,
       },
     });
+
+    await createEventInCalendar(type, dateEvent);
+
     return {
       message: `Succes create`,
       success: true,
@@ -47,6 +50,98 @@ export const createScheduleEvent = async (
       message: `${error}`,
       success: false,
     };
+  }
+};
+
+const createEventInCalendar = async (
+  type: TypeEventFormating,
+  dateEvent: Date
+) => {
+  try {
+    const userAccounts = await db.user.findFirst({
+      where: {
+        userId: type.userId,
+      },
+      include: {
+        accounts: true,
+      },
+    });
+
+    if (!userAccounts?.accounts) {
+      throw new Error("NOT FOUND ACOUNTS USER");
+    }
+
+    if (!userAccounts.accounts.some((v) => v.type == "oauth_google")) {
+      throw new Error("NOT FOUND ACCOUNT GOOGLE");
+    }
+
+    const startDate = dateEvent.toISOString();
+    const timeDuration = type.duration.time;
+    const timeAdd =
+      type.duration.format == "min" ? timeDuration : timeDuration * 60;
+
+    dateEvent.setMinutes(dateEvent.getMinutes() + timeAdd);
+    const endDate = dateEvent.toISOString();
+    const email = type.inviteQuestions[1].data.responseTxt;
+    var event = {
+      summary: `Event: ${type.eventName}`,
+      location: `${type.location.type.type}`,
+      description: "This is schedule event for meeting",
+      start: {
+        dateTime: startDate,
+        timeZone: type.scheduleAvailibity!.timeZone,
+      },
+      end: {
+        dateTime: endDate,
+        timeZone: type.scheduleAvailibity!.timeZone,
+      },
+      recurrence: ["RRULE:FREQ=DAILY;COUNT=1"],
+      attendees: [{ email: email }],
+      reminders: {
+        useDefault: false,
+        overrides: [
+          { method: "email", minutes: 24 * 60 },
+          { method: "popup", minutes: 10 },
+        ],
+      },
+    };
+
+    const accountGoogle = userAccounts.accounts.find(
+      (v) => v.type === "oauth_google"
+    );
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.OAUTH2_REDIRECT_URI
+    );
+    oauth2Client.setCredentials({
+      access_token: accountGoogle?.accessToken,
+    });
+    const calendar = google.calendar({
+      version: "v3",
+      auth: oauth2Client,
+    });
+
+    const result = new Promise((resolve, reject) => {
+      calendar.events.insert(
+        {
+          calendarId: "primary",
+          requestBody: event,
+          auth: oauth2Client,
+        },
+        (err: any, event: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          reject(event);
+        }
+      );
+    });
+
+    console.log("[CREATE_EVENT_CALENDAR]");
+  } catch (error) {
+    console.log("[ERROR_createEventInCalendar]", error);
   }
 };
 

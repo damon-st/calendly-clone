@@ -8,11 +8,15 @@ import { auth } from "@clerk/nextjs/server";
 
 export const getUserByUserName = async (userName: string) => {
   try {
-    return await db.user.findFirst({
+    const user = await db.user.findFirst({
       where: {
         userName,
       },
     });
+    if (!user) {
+      return null;
+    }
+    return user as UserInfo;
   } catch (error) {
     console.log(`[ERROR_getUserByUserName]${error}`);
     return null;

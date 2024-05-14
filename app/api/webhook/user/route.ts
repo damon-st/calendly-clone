@@ -1,5 +1,7 @@
 import { createNewUser } from "@/lib/services/user";
 import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
@@ -24,6 +26,32 @@ export async function POST(req: Request) {
         imageUrl: data.image_url,
         userName: emailT,
       });
+
+      if (
+        data.external_accounts &&
+        data.external_accounts[0].object === "google_account"
+      ) {
+        const responseClerk = await clerkClient.users.getUserOauthAccessToken(
+          data.id,
+          "oauth_google"
+        );
+        if (responseClerk.data && responseClerk.data[0].token) {
+          const accessToken = responseClerk.data[0].token;
+          console.log("[ACCES__TOKEN]", accessToken);
+          await db.accounts.create({
+            data: {
+              type: "oauth_google",
+              accessToken,
+              clientId: responseClerk.data[0].externalAccountId,
+              user: {
+                connect: {
+                  userId: data.id,
+                },
+              },
+            },
+          });
+        }
+      }
     }
 
     return new NextResponse(null, { status: 200 });

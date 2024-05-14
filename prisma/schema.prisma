@@ -33,6 +33,8 @@ model User {
 
   events EventType[]
 
+  accounts Accounts[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -165,4 +167,19 @@ model ScheduleEvents {
   updatedAt DateTime @updatedAt
 
   @@index([idEventType])
+}
+
+model Accounts {
+  id     String @id @default(uuid()) @map("_id")
+  type   String
+  userId String
+  user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  accessToken String?
+  clientId    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

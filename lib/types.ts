@@ -160,7 +160,7 @@ export type DataNewEnvet = {
 export type TypeEventFormating = EventType & {
   duration: TypeDurationCustom;
   location: TypeNewEventLocation;
-  user?: User | null;
+  user?: UserInfo | null;
   scheduleAvailibity?: ScheduleWithProps | null;
   inviteQuestions: TypeInviteQuestions[];
 };
