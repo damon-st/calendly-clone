@@ -1,5 +1,9 @@
 "use client";
-import { ScheduleTypeWithHours, TypeEventFormating } from "@/lib/types";
+import {
+  CountryInfoUser,
+  ScheduleTypeWithHours,
+  TypeEventFormating,
+} from "@/lib/types";
 import React, {
   useCallback,
   useMemo,
@@ -13,6 +17,7 @@ import { format, setHours } from "date-fns";
 import { cn, formatHourMin, generateIntervalHours } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { getSchedulesEventInvitationWhereTime } from "@/actions/schedule_events";
+import SelectTimeZone from "../global/SelectTimeZone";
 
 type Props = {
   eventType: TypeEventFormating;
@@ -33,6 +38,11 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
   const [date, setDate] = React.useState<Date>(new Date());
   const [dateSelect, setDateSelect] = useState<Date | null>(null);
   const loadingHours = useRef(false);
+  const [timeZone, setTimeZone] = useState<CountryInfoUser>({
+    countryCode: eventType.scheduleAvailibity?.countryCode ?? "EC",
+    countryName: eventType.scheduleAvailibity?.countryName ?? "",
+    timezone: eventType.scheduleAvailibity?.timeZone ?? "",
+  });
 
   const [timeHours, setTimeHours] = useState<Array<Hours>>([]);
 
@@ -89,7 +99,7 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
         }
       });
     },
-    [eventType.duration.format, eventType.duration.time]
+    [eventType.duration, eventType.id]
   );
   const onChangeDate = useCallback(
     (value: Date, weekDate?: ScheduleTypeWithHours) => {
@@ -134,10 +144,10 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
       const formatDateT = tempDate.toISOString();
       const url = `${pathName}/${formatDateT}?date=${dateF}&hour=${JSON.stringify(
         h
-      )}`;
+      )}&timeZone=${JSON.stringify(timeZone)}`;
       router.push(url);
     },
-    [dateSelect, pathName, router]
+    [dateSelect, pathName, router, timeZone]
   );
 
   return (
@@ -168,11 +178,11 @@ export default function SelectTimeEvent({ eventType, preview }: Props) {
               <p className="text-colorTextBlack font-girloySemiBold">
                 Time zone
               </p>
-              <div className="flex gap-3 items-center hover:bg-gray-100 rounded-lg cursor-pointer px-1 py-1">
-                <Earth className="text-colorTextGris" size={20} />
-                <span>{eventType.scheduleAvailibity?.countryName} Time</span>
-                <ChevronDown className="text-colorTextGris" />
-              </div>
+              <SelectTimeZone
+                onChangeTimeZone={setTimeZone}
+                country={timeZone.countryName}
+                timeZone={timeZone.timezone}
+              />
             </div>
           </div>
         )}

@@ -85,7 +85,12 @@ export default function InviteQuestionInput({ invite, onChange }: Props) {
   );
   const countryElem = useMemo(() => {
     if (!showSelectCountry) return null;
-    return <SelectCountry onChange={onChangeCountry} />;
+    return (
+      <SelectCountry
+        onClose={setShowSelectCountry}
+        onChange={onChangeCountry}
+      />
+    );
   }, [onChangeCountry, showSelectCountry]);
 
   const onChangeNumber = useCallback(

@@ -2,6 +2,7 @@
 import { google } from "googleapis";
 import { db } from "@/lib/db";
 import {
+  CountryInfoUser,
   DateRange,
   ScheduleEventSearch,
   TypeEventFormating,
@@ -15,10 +16,10 @@ import { format } from "date-fns";
 
 export const createScheduleEvent = async (
   type: TypeEventFormating,
-  dateEvent: Date
+  dateEvent: Date,
+  timeZone: CountryInfoUser
 ): Promise<TypeResultAction> => {
   try {
-    const timeZone = type.scheduleAvailibity!.timeZone;
     const dateStr = format(dateEvent, "yyyy-MM-dd");
     const hourStr = format(dateEvent, "HH:mm");
     const email = type.inviteQuestions[1].data.responseTxt;
@@ -30,9 +31,9 @@ export const createScheduleEvent = async (
             id: type.id,
           },
         },
-        countryCode: type.scheduleAvailibity!.countryCode,
-        countryName: type.scheduleAvailibity!.countryName,
-        timeZone: timeZone,
+        countryCode: timeZone.countryCode,
+        countryName: timeZone.countryName,
+        timeZone: timeZone.timezone,
         dateEvent: dateEvent,
         dateStr,
         hourStr,
@@ -66,7 +67,7 @@ export const createScheduleEvent = async (
         data: {
           email,
           name: nameContact,
-          timeZone: timeZone,
+          timeZone: timeZone.timezone,
           userIdHost: type.userId,
           meetingHistory: {
             connect: {
@@ -76,7 +77,7 @@ export const createScheduleEvent = async (
         },
       });
     }
-    await createEventInCalendar(type, dateEvent);
+    await createEventInCalendar(type, dateEvent, timeZone);
     return {
       message: `Succes create`,
       success: true,
@@ -92,7 +93,8 @@ export const createScheduleEvent = async (
 
 const createEventInCalendar = async (
   type: TypeEventFormating,
-  dateEvent: Date
+  dateEvent: Date,
+  timeZone: CountryInfoUser
 ) => {
   try {
     const userAccounts = await db.user.findFirst({
@@ -126,11 +128,11 @@ const createEventInCalendar = async (
       description: "This is schedule event for meeting",
       start: {
         dateTime: startDate,
-        timeZone: type.scheduleAvailibity!.timeZone,
+        timeZone: timeZone.timezone,
       },
       end: {
         dateTime: endDate,
-        timeZone: type.scheduleAvailibity!.timeZone,
+        timeZone: timeZone.timezone,
       },
       recurrence: ["RRULE:FREQ=DAILY;COUNT=1"],
       attendees: [{ email: email }],

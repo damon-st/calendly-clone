@@ -60,7 +60,12 @@ export default function EvenTypeLocationInput({
 
   return (
     <>
-      {showSelectCountry && <SelectCountry onChange={onChangeCountry} />}
+      {showSelectCountry && (
+        <SelectCountry
+          onClose={onShowDialoCountry}
+          onChange={onChangeCountry}
+        />
+      )}
 
       <div className="w-full flex flex-col items-start mt-2">
         <p className="text-md font-semibold text-colorTextBlack">{title} *</p>

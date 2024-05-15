@@ -27,9 +27,10 @@ export const getCountryDefault = (): TypeCountry => {
 
 type Props = {
   onChange: (e: TypeCountry) => void;
+  onClose: (b: boolean) => void;
 };
 
-export default function SelectCountry({ onChange }: Props) {
+export default function SelectCountry({ onChange, onClose }: Props) {
   const countryList = useMemo(() => {
     return countries.map((v) => {
       const temp = all().find(
@@ -47,7 +48,7 @@ export default function SelectCountry({ onChange }: Props) {
   }, []);
 
   return (
-    <Dialog open>
+    <Dialog open onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle> Select country code</DialogTitle>

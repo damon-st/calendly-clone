@@ -1,7 +1,9 @@
 import { getSingleEventByName } from "@/actions/event_type";
 import EventFormularioCreate from "@/components/event_type/EventFormularioCreate";
 import BackButton from "@/components/global/BackButton";
+import BrandingCalendly from "@/components/global/BrandingCalendly";
 import LocationEventType from "@/components/global/LocationEventType";
+import { CountryInfoUser } from "@/lib/types";
 import { format } from "date-fns";
 import { Calendar, Clock, Earth } from "lucide-react";
 import Link from "next/link";
@@ -14,9 +16,13 @@ type Props = {
     idEvent: string;
     dateEvent: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export default async function PageEventConfirm({ params }: Props) {
+export default async function PageEventConfirm({
+  params,
+  searchParams,
+}: Props) {
   const eventType = await getSingleEventByName(params.idEvent, params.nameUser);
   if (!eventType) {
     return redirect("/");
@@ -34,14 +40,34 @@ export default async function PageEventConfirm({ params }: Props) {
     fechaEventInit,
     "EEEE"
   )}, ${format(fechaEventInit, "MMMM dd, yyyy")}`;
+
+  if (!searchParams?.timeZone) {
+    return redirect("/");
+  }
+
+  const timeZone = JSON.parse(
+    decodeURIComponent(searchParams?.timeZone as string)
+  ) as CountryInfoUser;
+
   return (
-    <main className="size-full bg-colorGrisDash flex items-center justify-center">
-      <div className="w-full flex max-w-[70%] bg-white h-full max-h-[80vh] shadow-lg rounded-lg">
-        <div className="w-[40%] h-full border-r border-gray-300 relative p-6 overflow-hidden">
-          <div className="flex items-center ">
-            <BackButton />
+    <main className="size-full bg-colorGrisDash flex items-center justify-center overflow-y-auto">
+      <div className="w-full flex flex-col md:flex-row md:max-w-[70%] bg-white h-full  shadow-lg rounded-lg relative md:max-h-[80vh]">
+        <div className="flex flex-col md:w-[40%] h-full border-r border-gray-300 relative overflow-y-auto overflow-x-hidden">
+          <div className="flex items-center justify-center relative min-h-12 border-b border-gray-300 p-6">
+            {eventType.user?.brandingInfo?.logoUrl && (
+              <picture>
+                <img
+                  src={eventType.user.brandingInfo.logoUrl}
+                  alt="logo"
+                  className="object-contain max-h-[150px]"
+                />
+              </picture>
+            )}
+            <div className="absolute flex items-start justify-start top-3 left-4  w-full">
+              <BackButton />
+            </div>
           </div>
-          <div className="w-full mt-3 flex flex-col gap-1">
+          <div className="w-full mt-3 flex flex-col gap-1  p-6 ">
             <div className="w-full pb-2">
               <p className="text-colorTextGris font-girloySemiBold">
                 {eventType.user?.name}
@@ -63,7 +89,7 @@ export default async function PageEventConfirm({ params }: Props) {
             </div>
             <div className="w-full flex items-center gap-3 text-colorTextGris font-girloySemiBold">
               <Earth className="text-colorTextGris" />
-              <p>{eventType.scheduleAvailibity?.countryName} Time</p>
+              <p>{timeZone.countryName} Time</p>
             </div>
             <div
               className="mt-2"
@@ -79,22 +105,14 @@ export default async function PageEventConfirm({ params }: Props) {
             </div>
           </div>
         </div>
-        <div className="w-[60%] h-full relative overflow-y-auto overflow-x-hidden">
-          <a
-            href="https://calendly.com/?utm_campaign=sign_up&amp;utm_medium=badge&amp;utm_source=invitee"
-            target="_blank"
-            className="bannerCal  bannerCal2"
-          >
-            <div data-id="branding" className="brandinCal ">
-              <div className="textBranCal ">powered by</div>
-              <div className="textBranCal2 ">Calendly</div>
-            </div>
-          </a>
+        <div className="w-full md:w-[60%] h-full relative overflow-y-auto">
           <EventFormularioCreate
             dateEvent={fechaEventInit}
             eventType={eventType}
+            timeZone={timeZone}
           />
         </div>
+        <BrandingCalendly />
       </div>
     </main>
   );

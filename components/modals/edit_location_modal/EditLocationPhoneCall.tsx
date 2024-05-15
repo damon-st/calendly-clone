@@ -63,7 +63,12 @@ export default function EditLocationPhoneCall({ onClose }: Props) {
   ]);
   return (
     <>
-      {showSelectCountry && <SelectCountry onChange={onChangeCountry} />}
+      {showSelectCountry && (
+        <SelectCountry
+          onClose={onShowDialoCountry}
+          onChange={onChangeCountry}
+        />
+      )}
 
       <div className="w-full">
         <button

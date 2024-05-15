@@ -1,5 +1,9 @@
 "use client";
-import { TypeEventFormating, TypeInviteQuestions } from "@/lib/types";
+import {
+  CountryInfoUser,
+  TypeEventFormating,
+  TypeInviteQuestions,
+} from "@/lib/types";
 import React, { useCallback, useMemo, useState, useTransition } from "react";
 import InviteQuestionInput from "./InviteQuestionInput";
 import EvenTypeLocationInput from "./EvenTypeLocationInput";
@@ -11,9 +15,14 @@ import { createScheduleEvent } from "@/actions/schedule_events";
 type Props = {
   eventType: TypeEventFormating;
   dateEvent: Date;
+  timeZone: CountryInfoUser;
 };
 
-export default function EventFormularioCreate({ dateEvent, eventType }: Props) {
+export default function EventFormularioCreate({
+  dateEvent,
+  eventType,
+  timeZone,
+}: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [inviteQuestions, setInviteQuestions] = useState(
@@ -53,7 +62,8 @@ export default function EventFormularioCreate({ dateEvent, eventType }: Props) {
               inviteQuestions,
               location,
             },
-            dateEvent
+            dateEvent,
+            timeZone
           );
           if (!response.success) {
             throw new Error(`${response.message}`);
@@ -67,7 +77,15 @@ export default function EventFormularioCreate({ dateEvent, eventType }: Props) {
         }
       });
     },
-    [isPending, eventType, inviteQuestions, location, dateEvent, router]
+    [
+      isPending,
+      eventType,
+      inviteQuestions,
+      location,
+      dateEvent,
+      timeZone,
+      router,
+    ]
   );
   return (
     <form onSubmit={handleSubmit} className="size-full p-6">
