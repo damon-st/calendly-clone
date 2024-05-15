@@ -139,7 +139,7 @@ export default function Sidebar({ user }: Props) {
       )}
       <div
         className={cn(
-          "w-[260px] transition-all duration-500 h-full bg-white border-r border-gray-300 flex flex-col  group ",
+          "w-[260px] transition-all duration-500 h-full bg-white border-r border-gray-300 hidden md:flex flex-col  group  ",
           !open && "w-[65px] hover:w-[260px]"
         )}
       >

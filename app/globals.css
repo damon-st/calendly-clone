@@ -505,3 +505,17 @@ html,body,:root{
   display: grid;
   grid-template-columns: 25% 75%;
 }
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: 25% 15% 20% 40%  ;
+}
+
+
+
+@media only screen and (max-width:600px) {
+  .contactGrid{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}

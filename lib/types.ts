@@ -1,3 +1,4 @@
+import { getAllContacts } from "@/actions/contacts";
 import { getAllSchedules } from "@/actions/schedules";
 import {
   EventType,
@@ -51,6 +52,10 @@ export type TypeResultAction = {
 
 export type ShedulesWithTypes = Prisma.PromiseReturnType<
   typeof getAllSchedules
+>;
+
+export type ContactWithSchedules = Prisma.PromiseReturnType<
+  typeof getAllContacts
 >;
 
 export type TimeHour = {

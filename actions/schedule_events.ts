@@ -18,8 +18,11 @@ export const createScheduleEvent = async (
   dateEvent: Date
 ): Promise<TypeResultAction> => {
   try {
+    const timeZone = type.scheduleAvailibity!.timeZone;
     const dateStr = format(dateEvent, "yyyy-MM-dd");
     const hourStr = format(dateEvent, "HH:mm");
+    const email = type.inviteQuestions[1].data.responseTxt;
+    const nameContact = type.inviteQuestions[0].data.responseTxt;
     const temp = await db.scheduleEvents.create({
       data: {
         eventType: {
@@ -29,7 +32,7 @@ export const createScheduleEvent = async (
         },
         countryCode: type.scheduleAvailibity!.countryCode,
         countryName: type.scheduleAvailibity!.countryName,
-        timeZone: type.scheduleAvailibity!.timeZone,
+        timeZone: timeZone,
         dateEvent: dateEvent,
         dateStr,
         hourStr,
@@ -38,8 +41,42 @@ export const createScheduleEvent = async (
       },
     });
 
-    await createEventInCalendar(type, dateEvent);
+    const previusContact = await db.contacts.findFirst({
+      where: {
+        email,
+        userIdHost: type.userId,
+      },
+    });
 
+    if (previusContact) {
+      await db.contacts.update({
+        where: {
+          id: previusContact.id,
+        },
+        data: {
+          meetingHistory: {
+            connect: {
+              id: temp.id,
+            },
+          },
+        },
+      });
+    } else {
+      await db.contacts.create({
+        data: {
+          email,
+          name: nameContact,
+          timeZone: timeZone,
+          userIdHost: type.userId,
+          meetingHistory: {
+            connect: {
+              id: temp.id,
+            },
+          },
+        },
+      });
+    }
+    await createEventInCalendar(type, dateEvent);
     return {
       message: `Succes create`,
       success: true,

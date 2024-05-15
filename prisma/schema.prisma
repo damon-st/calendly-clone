@@ -163,10 +163,14 @@ model ScheduleEvents {
   idEventType String
   eventType   EventType @relation(references: [id], fields: [idEventType], onDelete: Cascade)
 
+  contactId String?
+  contacts  Contacts? @relation(references: [id], fields: [contactId], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([idEventType])
+  @@index([contactId])
 }
 
 model Accounts {
@@ -182,4 +186,21 @@ model Accounts {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Contacts {
+  id String @id @default(uuid()) @map("_id")
+
+  name     String
+  email    String
+  timeZone String
+  phone    String?
+  favorite Boolean @default(false)
+
+  userIdHost String
+
+  meetingHistory ScheduleEvents[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

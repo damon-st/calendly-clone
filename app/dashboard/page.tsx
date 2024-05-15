@@ -42,7 +42,7 @@ export default async function DashboardPage({}: Props) {
         </h1>
       </div>
       <div className="w-full flex flex-col gap-2">
-        <div className="w-full flex items-center gap-4 mb-6">
+        <div className="w-full flex flex-col md:flex-row items-center gap-4 mb-6">
           <button className="rounded-lg bg-white px-4 py-2 flex items-center gap-2 text-colorTextBlack font-girloyRegular border border-gray-300">
             <span>My Calendly</span>
             <ChevronDown className="text-colorTextBlack" />
@@ -75,7 +75,7 @@ export default async function DashboardPage({}: Props) {
             <div className="flex items-center gap-2">
               <Link
                 href="/dashboard/new-event"
-                className="text-colorAzul bg-white font-girloyRegular rounded-full border border-colorAzul px-3 py-1 hover:bg-colorCelesteHover"
+                className="text-colorAzul bg-white font-girloyRegular rounded-full border border-colorAzul px-3 py-1 hover:bg-colorCelesteHover hidden md:flex"
               >
                 New Event Type
               </Link>
@@ -112,6 +112,14 @@ export default async function DashboardPage({}: Props) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          </div>
+          <div className="w-full flex items-center justify-center md:hidden mb-2">
+            <Link
+              href="/dashboard/new-event"
+              className="text-colorAzul bg-white font-girloyRegular rounded-full border border-colorAzul px-3 py-1 hover:bg-colorCelesteHover"
+            >
+              New Event Type
+            </Link>
           </div>
           <div className="w-full">
             <Suspense fallback={<EventsTypeListSkeleton />}>
