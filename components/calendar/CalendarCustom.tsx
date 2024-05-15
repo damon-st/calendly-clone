@@ -26,7 +26,9 @@ type TypeCalerad = {
 };
 
 export default function CalendarCustom({ weekHours }: Props) {
+  let onMosePreset = useRef(false);
   let date = useRef(new Date());
+  let dateDow = useRef<Date | null>();
   let year = useRef(date.current.getFullYear());
   let month = useRef(date.current.getMonth());
   let txtMonthYear = useRef("");
@@ -177,6 +179,60 @@ export default function CalendarCustom({ weekHours }: Props) {
   const onSelectDate = useCallback((value: TypeCalerad) => {
     console.log(value);
   }, []);
+  const onMousedown = useCallback((item: TypeCalerad) => {
+    console.log("MOUSE-DOWN");
+    item.classNames = `${item.classNames} tdHoverActive`;
+    dateDow.current = item.date;
+    onMosePreset.current = true;
+  }, []);
+  const onMouseUp = useCallback((item: TypeCalerad) => {
+    dateDow.current = null;
+    onMosePreset.current = false;
+    setCalendar((p) => {
+      let temp1 = [...p];
+      for (const iterator of temp1) {
+        for (const row of iterator) {
+          row.classNames = row.classNames.replaceAll("tdHoverActive", "");
+        }
+      }
+      return temp1;
+    });
+  }, []);
+
+  const onMouseEnter = useCallback((item: TypeCalerad) => {
+    if (!onMosePreset.current) return;
+    // item.classNames = `${item.classNames} tdHoverActive`;
+    if (!dateDow?.current) return;
+    setCalendar((p) => {
+      let temp1 = [...p];
+      for (const iterator of temp1) {
+        for (const row of iterator) {
+          if (!dateDow.current) continue;
+          const condition =
+            dateDow.current!.getTime() >= row.date.getTime()
+              ? row.date.getTime() <= dateDow.current!.getTime() &&
+                row.date.getTime() >= item.date.getTime()
+              : row.date.getTime() >= dateDow.current!.getTime() &&
+                row.date.getTime() <= item.date.getTime();
+          if (
+            condition &&
+            row.weekDate &&
+            row.weekDate.active &&
+            !row.classNames.includes("inactiveDates")
+          ) {
+            row.classNames = `${item.classNames} tdHoverActive`;
+          } else {
+            if (row.date.getTime() === dateDow.current.getTime()) continue;
+            row.classNames = row.classNames.replaceAll("tdHoverActive", "");
+          }
+        }
+      }
+      return temp1;
+    });
+  }, []);
+  const onMouseLeave = useCallback((item: TypeCalerad) => {
+    if (!onMosePreset.current) return;
+  }, []);
 
   return (
     <div className="w-full">
@@ -228,6 +284,10 @@ export default function CalendarCustom({ weekHours }: Props) {
                   key={row.id}
                 >
                   <button
+                    onMouseLeave={() => onMouseLeave(row)}
+                    onMouseEnter={() => onMouseEnter(row)}
+                    onMouseUp={() => onMouseUp(row)}
+                    onMouseDown={() => onMousedown(row)}
                     onClick={() => onSelectDate(row)}
                     className="flex pt-8 size-full"
                   >
