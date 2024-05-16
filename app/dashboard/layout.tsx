@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import Sidebar from "./_components/Sidebar";
 import Navbar from "@/components/global/NavbarDashboard";
+import { wait } from "@/lib/utils";
 type Props = {
   children: React.ReactNode;
 };
@@ -13,13 +14,19 @@ export default async function DashboardLayout({ children }: Props) {
   if (!userId) {
     return redirect("/");
   }
-  const user = await existUser(userId);
+  let user = await existUser(userId);
+
   if (!user) {
-    return redirect("/");
+    await wait(2500);
+    user = await existUser(userId);
+    if (!user) {
+      return redirect("/");
+    }
   }
   if (!user.introInfo) {
     return redirect("/intro");
   }
+
   return (
     <main className="size-full bg-colorGrisDash flex">
       <Sidebar user={user} />

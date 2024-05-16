@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import IntroInfoTeam from "./_components/IntroInfoTeam";
 import IntroInfoDoWork from "./_components/IntroInfoDoWork";
+import IntroSetCountry from "./_components/IntroSetCountry";
 
 export default async function IntroLayout() {
   const { userId } = auth();
@@ -31,6 +32,7 @@ export default async function IntroLayout() {
   }
   return (
     <main className="size-full relative overflow-hidden">
+      <IntroSetCountry user={user} />
       <picture>
         <img
           loading="lazy"

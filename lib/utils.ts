@@ -197,3 +197,7 @@ export function formatScheduleHour(
     updatedAt: new Date(),
   };
 }
+
+export async function wait(duration: number) {
+  return new Promise((res) => setTimeout(res, duration));
+}

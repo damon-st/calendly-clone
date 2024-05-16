@@ -46,7 +46,7 @@ export default function SidebarCreate({
   } = useNewEnventStore();
   const [durationCustom, setDurationCustom] = useState<TypeDurationCustom>({
     format: "min",
-    time: 0,
+    time: 15,
   });
 
   useEffect(() => {

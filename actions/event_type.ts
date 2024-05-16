@@ -6,14 +6,50 @@ import {
   TypeDurationCustom,
   TypeEventFormating,
   TypeInviteQuestions,
-  TypeLocationEvent,
   TypeNewEventLocation,
   TypeResultAction,
   UserInfo,
 } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
-import { getSchedulesFavorite } from "./schedules";
+import { createDefaultSchedule, getSchedulesFavorite } from "./schedules";
 import { getUserByUserName } from "./userActions";
+import { colorDefault } from "@/common/colorsDefault";
+
+export const createEvenTypeDefault = async () => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    await createDefaultSchedule(userId, undefined, true);
+    await createNewEvent(
+      {
+        color: colorDefault[0].color,
+        descriptionInstruc: "",
+        duration: {
+          time: 30,
+          format: "min",
+        },
+        inviteQuestions: [],
+        location: {
+          type: {
+            type: "phoneCall",
+            data: {
+              type: "mee",
+            },
+          },
+        },
+        nameEvent: "30 Minute Meeting",
+      },
+      "one-on-one"
+    );
+    console.log("[CREATE_DEFAULT_EVENT_CORRECT]");
+    return true;
+  } catch (error) {
+    console.log("[ERROR_createEvenTypeDefault]", error);
+    return false;
+  }
+};
 
 export const createNewEvent = async (
   data: DataNewEnvet,

@@ -1,5 +1,6 @@
 "use client";
 
+import { createEvenTypeDefault } from "@/actions/event_type";
 import { createIntroInfoUser, updateIntroInfoUser } from "@/actions/intro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +82,7 @@ export default function IntroInfoDoWork() {
           value = otherValue.length > 1 ? otherValue : value;
         }
         const result = await updateIntroInfoUser(value);
+        await createEvenTypeDefault();
         if (!result.success) {
           throw new Error(result.message);
         }

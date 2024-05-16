@@ -3,14 +3,16 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import React from "react";
 import { useClerk } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 type Props = {};
 
 export default function Logout({}: Props) {
   const { signOut } = useClerk();
-  const router = useRouter();
-  const handleClick = () => {
-    signOut(() => router.push("/"));
+  const handleClick = async () => {
+    try {
+      await signOut({ redirectUrl: "/" });
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <DropdownMenuItem

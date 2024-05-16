@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         email = tempEmasil[0].email_address;
       }
       const emailT = (email ?? "").split("@")?.[0];
-      await createNewUser({
+      const userCreate = await createNewUser({
         userId: data.id,
         email: email,
         name: data.first_name + " " + data.last_name,
@@ -46,14 +46,20 @@ export async function POST(req: Request) {
               user: {
                 connect: {
                   userId: data.id,
+                  id: userCreate?.id,
                 },
               },
             },
           });
         }
       }
+    } else if (type === "user.deleted") {
+      await db.user.delete({
+        where: {
+          userId: data.id,
+        },
+      });
     }
-
     return new NextResponse(null, { status: 200 });
   } catch (error) {
     console.log("[API_ERROR_WEBHOOK_USER_POST]", error);

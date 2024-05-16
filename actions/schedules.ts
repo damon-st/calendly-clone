@@ -2,6 +2,7 @@
 
 import { daysEN } from "@/common/week_days";
 import { db } from "@/lib/db";
+import { existUser } from "@/lib/services/user";
 import { TypeResultAction } from "@/lib/types";
 import { formatHourMin } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
@@ -43,15 +44,14 @@ export const createDefaultSchedule = async (
   favorite: boolean
 ): Promise<TypeResultAction> => {
   try {
-    const temp = getCountry("EC");
-
+    const user = await existUser(userId);
+    const temp = getCountry(user?.countryInfo?.countryCode ?? "EC");
     console.log(temp);
-
     const idSchedule = await db.scheduleM.create({
       data: {
-        countryCode: temp.id,
-        countryName: temp.name,
-        timeZone: temp.timezones[0],
+        countryCode: temp!.id,
+        countryName: temp!.name,
+        timeZone: temp!.timezones[0],
         userId,
         title,
         favorite,
@@ -82,7 +82,7 @@ export const createDefaultSchedule = async (
       });
     }
 
-    return { message: "Create success", success: true };
+    return { message: "Create success", success: true, data: idSchedule.id };
   } catch (error) {
     console.log(error);
     return { message: `Error:${error}`, success: false };
