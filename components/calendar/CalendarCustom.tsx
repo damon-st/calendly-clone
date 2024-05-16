@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDaysIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -11,9 +11,11 @@ import { format } from "date-fns";
 import { daysEN } from "@/common/week_days";
 import { cn, divideArrayInParts } from "@/lib/utils";
 import { ScheduleTypeWithHours } from "@/lib/types";
+import { ScheduleSpecifitHours } from "@prisma/client";
 
 type Props = {
   weekHours: ScheduleTypeWithHours[];
+  specificDays: ScheduleSpecifitHours[];
 };
 
 type TypeCalerad = {
@@ -23,9 +25,10 @@ type TypeCalerad = {
   active: boolean;
   id: number;
   weekDate?: ScheduleTypeWithHours;
+  idSpecificHours?: string;
 };
 
-export default function CalendarCustom({ weekHours }: Props) {
+export default function CalendarCustom({ weekHours, specificDays }: Props) {
   let onMosePreset = useRef(false);
   let date = useRef(new Date());
   let dateDow = useRef<Date | null>();
@@ -79,6 +82,7 @@ export default function CalendarCustom({ weekHours }: Props) {
     const tempDate = new Date();
     for (let i = 1; i <= lastDate; i++) {
       const id = verifyId(lit);
+      const dateTemp = new Date(year.current, month.current, i);
 
       /// Check if the current date is today
       let isToday =
@@ -91,12 +95,24 @@ export default function CalendarCustom({ weekHours }: Props) {
       if (i < date.current.getDate() && month.current === tempDate.getMonth()) {
         classN = "inactiveDates";
       }
+      let idSpecificHours: string | undefined = undefined;
+      if (
+        specificDays.find((v) =>
+          v.dates.some((d) => d.getTime() === dateTemp.getTime())
+        )
+      ) {
+        classN = `${classN} datesSpecifc`;
+        idSpecificHours = specificDays.find((v) =>
+          v.dates.some((d) => d.getTime() === dateTemp.getTime())
+        )?.id;
+      }
       lit.push({
         active: isToday,
         classNames: classN,
         label: `${i}`,
-        date: new Date(year.current, month.current, i),
+        date: dateTemp,
         id,
+        idSpecificHours,
       });
     }
     /// Loop to add the first dates of the next moth
@@ -299,6 +315,11 @@ export default function CalendarCustom({ weekHours }: Props) {
                     >
                       {row.label}
                     </div>
+                    {row.idSpecificHours && (
+                      <div className="absolute top-1 right-1 flex items-center justify-center">
+                        <CalendarDaysIcon className="text-colorAzul" />
+                      </div>
+                    )}
                     {row.weekDate && (
                       <div className="w-full flex items-center flex-col gap-1">
                         {row.weekDate.scheduleHours.map((sh) => (

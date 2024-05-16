@@ -335,6 +335,16 @@ export const createSpecificScheduleHours = async (
   hours: ScheduleHoursM[]
 ): Promise<TypeResultAction> => {
   try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    if (dates.length == 0) {
+      return {
+        message: "Please one day is required",
+        success: false,
+      };
+    }
     const create = await db.scheduleSpecifitHours.create({
       data: {
         dates,
@@ -359,6 +369,95 @@ export const createSpecificScheduleHours = async (
         },
       });
     }
+    return {
+      message: "Create Date Specific correct",
+      success: true,
+    };
+  } catch (error) {
+    return {
+      message: `${error}`,
+      success: false,
+    };
+  }
+};
+export const deleteSpecificScheduleHours = async (
+  id: string
+): Promise<TypeResultAction> => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    await db.scheduleSpecifitHours.delete({
+      where: {
+        id,
+      },
+    });
+    return {
+      success: true,
+      message: "Remove Date Specific hour correct",
+    };
+  } catch (error) {
+    console.log("[ERROR_deleteSpecificScheduleHours]", error);
+    return {
+      message: `${error}`,
+      success: false,
+    };
+  }
+};
+
+export const updateSpecificScheduleHours = async (
+  scheduleId: string,
+  idSpecificDateHours: string,
+  dates: Date[],
+  hours: ScheduleHoursM[]
+): Promise<TypeResultAction> => {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      throw new Error("USER NOT FOUND");
+    }
+    await db.scheduleHoursM.deleteMany({
+      where: {
+        scheduleSpecificHourId: idSpecificDateHours,
+      },
+    });
+    if (dates.length == 0) {
+      await db.scheduleSpecifitHours.delete({
+        where: {
+          id: idSpecificDateHours,
+        },
+      });
+      return {
+        message: "Update data correct",
+        success: true,
+      };
+    }
+    for (const iterator of hours) {
+      const {
+        id,
+        createdAt,
+        updatedAt,
+        scheduleSpecificHourId,
+        scheduleWeekDayId,
+        ...dataHour
+      } = iterator;
+      await db.scheduleHoursM.create({
+        data: {
+          ...dataHour,
+          scheduleSpecificHourId: idSpecificDateHours,
+          scheduleWeekDayId: "",
+        },
+      });
+    }
+    await db.scheduleSpecifitHours.update({
+      where: {
+        id: idSpecificDateHours,
+      },
+      data: {
+        dates,
+      },
+    });
     return {
       message: "Create Date Specific correct",
       success: true,

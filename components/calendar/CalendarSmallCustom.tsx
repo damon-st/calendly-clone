@@ -20,6 +20,7 @@ type Props = {
   dateSelected?: Date | null;
   useMultipleSelect?: boolean;
   onChangeMultiple?: (days: Date[]) => void;
+  datesMultiplesInit: Date[];
 };
 
 type TypeCalerad = {
@@ -39,8 +40,10 @@ export default function CalendarSmallCustom({
   ignoreWeek = false,
   useMultipleSelect = false,
   onChangeMultiple,
+  datesMultiplesInit,
 }: Props) {
-  const [datesMultiples, setDatesMultiples] = useState<Date[]>([]);
+  const [datesMultiples, setDatesMultiples] =
+    useState<Date[]>(datesMultiplesInit);
   let loading = useRef(true);
   let date = useRef(initialDate);
   let year = useRef(date.current.getFullYear());
@@ -93,7 +96,7 @@ export default function CalendarSmallCustom({
     const tempDate = new Date();
     for (let i = 1; i <= lastDate; i++) {
       const id = verifyId(lit);
-
+      const dateTemp = new Date(year.current, month.current, i);
       /// Check if the current date is today
       let isToday =
         i === date.current.getDate() &&
@@ -108,11 +111,18 @@ export default function CalendarSmallCustom({
         }
       }
 
+      if (
+        useMultipleSelect &&
+        datesMultiples.some((v) => v.getTime() === dateTemp.getTime())
+      ) {
+        classN = `${classN} datesSpecificSelect`;
+      }
+
       lit.push({
         active: isToday,
         classNames: classN,
         label: `${i}`,
-        date: new Date(year.current, month.current, i),
+        date: dateTemp,
         id,
       });
     }
@@ -208,33 +218,26 @@ export default function CalendarSmallCustom({
           "datesSpecificSelect",
           ""
         );
-        setDatesMultiples((v) => {
-          let temp = [...v];
-          temp = temp.filter((v) => v.getTime() != value.date.getTime());
-          return temp;
-        });
+        let temp = [...datesMultiples];
+        temp = temp.filter((v) => v.getTime() != value.date.getTime());
+        setDatesMultiples(temp);
+        onChangeMultiple?.(temp);
       } else {
         value.classNames = `${value.classNames} datesSpecificSelect`;
-        setDatesMultiples((v) => {
-          let temp = [...v];
-          const exitsPrev = temp.find(
-            (v) => v.getTime() === value.date.getTime()
-          );
-          if (!exitsPrev) {
-            temp.push(value.date);
-          }
-          return temp;
-        });
+        let temp = [...datesMultiples];
+        const exitsPrev = temp.find(
+          (v) => v.getTime() === value.date.getTime()
+        );
+        if (!exitsPrev) {
+          temp.push(value.date);
+        }
+        setDatesMultiples(temp);
+        onChangeMultiple?.(temp);
       }
       console.log("Das");
     },
-    [onChangeDate, useMultipleSelect]
+    [datesMultiples, onChangeDate, onChangeMultiple, useMultipleSelect]
   );
-
-  useEffect(() => {
-    if (!useMultipleSelect) return;
-    onChangeMultiple?.(datesMultiples);
-  }, [datesMultiples, onChangeMultiple, useMultipleSelect]);
 
   return (
     <div className="w-full max-w-[400px] min-h-[40vh] relative">

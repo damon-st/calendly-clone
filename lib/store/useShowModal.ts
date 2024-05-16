@@ -1,9 +1,15 @@
 import { create } from "zustand";
-import { TypeInviteQuestions, TypeLocationEventNames } from "../types";
+import {
+  TypeInviteQuestions,
+  TypeLocationEventNames,
+  TypeScheduleSpecifitHours,
+} from "../types";
 
 type DataScheduleSpecifHour = {
   idSchedule: string;
   dates: Date[];
+  isEditing: boolean;
+  specifHours?: TypeScheduleSpecifitHours;
 };
 
 type Data = {

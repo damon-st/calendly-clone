@@ -1,5 +1,9 @@
 "use client";
-import { ScheduleTypeWithHours, ShedulesWithTypes } from "@/lib/types";
+import {
+  ScheduleTypeWithHours,
+  ShedulesWithTypes,
+  TypeScheduleSpecifitHours,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
   Calendar,
@@ -63,6 +67,9 @@ export default function SchedulesList({ schedules, userId }: Props) {
     if (scheduleSelect && !schedules.some((v) => v.id == scheduleSelect.id)) {
       setScheduleSelect(schedules[0]);
       return;
+    }
+    if (scheduleSelect && schedules.find((v) => v.id === scheduleSelect.id)) {
+      setScheduleSelect(schedules.find((v) => v.id === scheduleSelect.id)!);
     }
   }, [schedules]);
 
@@ -172,9 +179,48 @@ export default function SchedulesList({ schedules, userId }: Props) {
       scheduleSpecific: {
         idSchedule: scheduleSelect!.id,
         dates: [],
+        isEditing: false,
       },
     });
   }, [onOpenModal, scheduleSelect]);
+
+  const onRemoveSpecifcDateHour = useCallback(
+    (id: string, index: number) => {
+      let tempSelect = scheduleSelect;
+      let scheduleSpecificHours = [
+        ...(tempSelect?.scheduleSpecificHours ?? []),
+      ];
+      scheduleSpecificHours = scheduleSpecificHours.filter((v) => v.id != id);
+      tempSelect!.scheduleSpecificHours = scheduleSpecificHours;
+      setScheduleSelect(tempSelect);
+      setSchedulesList((v) => {
+        let temp: Array<any> = [];
+        for (const iterator of v) {
+          if (iterator.id === tempSelect?.id) {
+            temp.push(tempSelect);
+          } else {
+            temp.push(iterator);
+          }
+        }
+        return temp;
+      });
+    },
+    [scheduleSelect]
+  );
+
+  const onEditSpecificDateHours = useCallback(
+    (item: TypeScheduleSpecifitHours, index: number) => {
+      onOpenModal("scheduleSpecifisHours", {
+        scheduleSpecific: {
+          dates: item.dates,
+          idSchedule: scheduleSelect!.id,
+          isEditing: true,
+          specifHours: item,
+        },
+      });
+    },
+    [onOpenModal, scheduleSelect]
+  );
 
   return (
     <div className="w-full mt-4">
@@ -335,14 +381,22 @@ export default function SchedulesList({ schedules, userId }: Props) {
                   <Plus />
                   <span>Add date-specific hours</span>
                 </button>
-                {scheduleSelect.scheduleSpecificHours.map((v) => (
-                  <ScheduleSpecificHoursItem item={v} key={v.id} />
+                {scheduleSelect.scheduleSpecificHours.map((v, i) => (
+                  <ScheduleSpecificHoursItem
+                    onEdit={() => onEditSpecificDateHours(v, i)}
+                    onRemoveSpecific={(id) => onRemoveSpecifcDateHour(id, i)}
+                    item={v}
+                    key={v.id}
+                  />
                 ))}
               </div>
             </div>
           ) : (
             <div className="w-full">
-              <CalendarCustom weekHours={scheduleSelect.scheduleWeekDays} />
+              <CalendarCustom
+                specificDays={scheduleSelect.scheduleSpecificHours}
+                weekHours={scheduleSelect.scheduleWeekDays}
+              />
             </div>
           )}
         </div>

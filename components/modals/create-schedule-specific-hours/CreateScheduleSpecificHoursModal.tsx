@@ -11,11 +11,14 @@ import { Button } from "@/components/ui/button";
 import { ScheduleHoursM } from "@prisma/client";
 import ScheduleHourItem from "@/components/global/ScheduleHourItem";
 import { TypeTimeHourValid } from "@/lib/types";
-import { Loader2, Plus } from "lucide-react";
+import { Loader, Loader2, Plus } from "lucide-react";
 import { formatScheduleHour } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { createSpecificScheduleHours } from "@/actions/schedules";
+import {
+  createSpecificScheduleHours,
+  updateSpecificScheduleHours,
+} from "@/actions/schedules";
 
 const initHours: ScheduleHoursM[] = [
   {
@@ -38,26 +41,35 @@ const initHours: ScheduleHoursM[] = [
 
 export default function CreateScheduleSpecificHoursModal() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [hours, setHours] = useState<ScheduleHoursM[]>(initHours);
   const { isOpen, type, onClose, data } = useShowModal();
   const [days, setDays] = useState<Date[]>([]);
   const open = isOpen && type == "scheduleSpecifisHours";
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (isPending) return;
     onClose();
     setDays([]);
     setHours(initHours);
-  };
+    setLoading(true);
+  }, [isPending, onClose]);
   const onChangeDate = useCallback((e: Date) => {
     console.log(e);
   }, []);
 
   useEffect(() => {
+    if (!data?.scheduleSpecific) return;
     if (data?.scheduleSpecific?.dates) {
       setDays(data.scheduleSpecific.dates);
     }
-  }, [data?.scheduleSpecific?.dates]);
+    if (data?.scheduleSpecific?.specifHours) {
+      setHours(data.scheduleSpecific.specifHours.hours);
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 0);
+  }, [data?.scheduleSpecific]);
 
   const handleDisabled = (id: string) => {
     setHours((p) => {
@@ -137,16 +149,30 @@ export default function CreateScheduleSpecificHoursModal() {
     startTransition(async () => {
       try {
         const daysOrder = days.sort((a, b) => a.getTime() - b.getTime());
-        const response = await createSpecificScheduleHours(
-          data?.scheduleSpecific?.idSchedule ?? "",
-          daysOrder,
-          hours
-        );
-        if (!response.success) {
-          toast.error(response.message);
-          return;
+        if (data?.scheduleSpecific?.isEditing) {
+          const response = await updateSpecificScheduleHours(
+            data?.scheduleSpecific?.idSchedule ?? "",
+            data.scheduleSpecific.specifHours?.id ?? "",
+            daysOrder,
+            hours
+          );
+          if (!response.success) {
+            toast.error(response.message);
+            return;
+          }
+          toast.success(response.message);
+        } else {
+          const response = await createSpecificScheduleHours(
+            data?.scheduleSpecific?.idSchedule ?? "",
+            daysOrder,
+            hours
+          );
+          if (!response.success) {
+            toast.error(response.message);
+            return;
+          }
+          toast.success(response.message);
         }
-        toast.success(response.message);
         router.refresh();
         handleClose();
       } catch (error) {
@@ -166,14 +192,21 @@ export default function CreateScheduleSpecificHoursModal() {
           </DialogTitle>
         </DialogHeader>
         <div className="w-full">
-          <CalendarSmallCustom
-            ignoreWeek={true}
-            initialDate={new Date()}
-            weekHours={[]}
-            onChangeDate={onChangeDate}
-            useMultipleSelect
-            onChangeMultiple={setDays}
-          />
+          {loading ? (
+            <div className="w-full min-h-[150px] rounded-lg flex items-center justify-center">
+              <Loader className="text-colorAzul animate-spin" size={50} />
+            </div>
+          ) : (
+            <CalendarSmallCustom
+              ignoreWeek={true}
+              initialDate={new Date()}
+              weekHours={[]}
+              onChangeDate={onChangeDate}
+              useMultipleSelect
+              onChangeMultiple={setDays}
+              datesMultiplesInit={days}
+            />
+          )}
         </div>
         {days.length > 0 && (
           <div className="w-full p-6 bg-colorGrisDash border-t border-b border-gray-400 shadow-sm overflow-y-auto max-h-[30vh]">
