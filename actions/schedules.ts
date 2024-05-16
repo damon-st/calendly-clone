@@ -24,6 +24,11 @@ export const getAllSchedules = async (userId: string) => {
             weekDay: "asc",
           },
         },
+        scheduleSpecificHours: {
+          include: {
+            hours: true,
+          },
+        },
       },
     });
   } catch (error) {
@@ -321,5 +326,47 @@ export const getSchedulesFavorite = async (userId: string) => {
   } catch (error) {
     console.log("[ERROR_getAllSchedules]", error);
     return null;
+  }
+};
+
+export const createSpecificScheduleHours = async (
+  scheduleId: string,
+  dates: Date[],
+  hours: ScheduleHoursM[]
+): Promise<TypeResultAction> => {
+  try {
+    const create = await db.scheduleSpecifitHours.create({
+      data: {
+        dates,
+        scheduleId,
+      },
+    });
+
+    for (const iterator of hours) {
+      const {
+        id,
+        createdAt,
+        updatedAt,
+        scheduleSpecificHourId,
+        scheduleWeekDayId,
+        ...dataHour
+      } = iterator;
+      await db.scheduleHoursM.create({
+        data: {
+          ...dataHour,
+          scheduleSpecificHourId: create.id,
+          scheduleWeekDayId: "",
+        },
+      });
+    }
+    return {
+      message: "Create Date Specific correct",
+      success: true,
+    };
+  } catch (error) {
+    return {
+      message: `${error}`,
+      success: false,
+    };
   }
 };

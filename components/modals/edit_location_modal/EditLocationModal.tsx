@@ -28,7 +28,7 @@ export default function EditLocationModal() {
       return <EditLocationInPerson onClose={onClose} />;
     }
   }, [data?.type, onClose]);
-
+  if (!open) return null;
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>

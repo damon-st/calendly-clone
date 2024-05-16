@@ -516,6 +516,21 @@ html,body,:root{
   grid-template-columns: 25% 15% 20% 40%  ;
 }
 
+.datesSpecific > button{
+  background-color: #0069ff11;
+  border-radius: 100%;
+  color: #0060e6;
+  font-weight: bold;
+  width: 90%;
+}
+.datesSpecific > button:hover {
+  background-color: #0069ff26;
+}
+
+.datesSpecificSelect > button {
+  background-color: #0069ff !important;
+  color: white !important;
+}
 
 
 @media only screen and (max-width:600px) {

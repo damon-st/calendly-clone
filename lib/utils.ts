@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { TimeHour, TypeResultAction, TypeTimeHourValid } from "./types";
+import { ScheduleHoursM } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -141,4 +142,58 @@ export function fomarmatHourTimezon(date: Date, timeZone: string) {
     minute: "2-digit",
     hour12: false,
   });
+}
+
+export function formatScheduleHour(
+  idWeek: string,
+  lastHour: ScheduleHoursM
+): ScheduleHoursM {
+  if (!lastHour) {
+    return {
+      hourInit: 9,
+      hourInitStr: "09",
+      minuteInit: 0,
+      minuteInitStr: "00",
+      hourEnd: 18,
+      hourEndStr: "18",
+      minuteEnd: 0,
+      minuteEndStr: "00",
+      order: 0,
+      scheduleWeekDayId: idWeek,
+      createdAt: new Date(),
+      id: new Date().toISOString(),
+      scheduleSpecificHourId: idWeek,
+      updatedAt: new Date(),
+    };
+  }
+  if (lastHour.hourEnd >= 23) {
+    throw new Error("CAN NOT ADD MORE HOURS");
+  }
+  const hourInit = lastHour.hourEnd + 1;
+  const hourInitStr = formatHourMin(hourInit);
+  let hourEnd = hourInit + 1;
+  let minuteEnd = lastHour.minuteEnd;
+  let minuteEndStr = lastHour.minuteEndStr;
+  if (hourEnd > 23) {
+    hourEnd = 23;
+    minuteEnd = 50;
+    minuteEndStr = formatHourMin(minuteEnd);
+  }
+  const hourEndStr = formatHourMin(hourEnd);
+  return {
+    scheduleWeekDayId: idWeek,
+    hourInit,
+    hourInitStr,
+    minuteInit: lastHour.minuteEnd,
+    minuteInitStr: lastHour.minuteEndStr,
+    hourEnd,
+    hourEndStr,
+    minuteEnd,
+    minuteEndStr,
+    order: lastHour.order + 1,
+    createdAt: new Date(),
+    id: new Date().toISOString(),
+    scheduleSpecificHourId: "",
+    updatedAt: new Date(),
+  };
 }

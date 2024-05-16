@@ -3,7 +3,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Copy, Loader, Plus } from "lucide-react";
 import React, { useCallback, useState, useTransition } from "react";
-import Hours from "./Hours";
 import { toast } from "sonner";
 import {
   createScheduleWeekDayNewHour,
@@ -12,6 +11,7 @@ import {
   updateScheduleWeekDayHours,
 } from "@/actions/schedules";
 import { ScheduleTypeWithHours, TypeTimeHourValid } from "@/lib/types";
+import ScheduleHourItem from "@/components/global/ScheduleHourItem";
 
 type Props = {
   week: ScheduleTypeWithHours;
@@ -184,7 +184,7 @@ export default function WeekDay({ week: iniTialValue, onChangeValue }: Props) {
         {week.active ? (
           <>
             {week.scheduleHours.map((v) => (
-              <Hours
+              <ScheduleHourItem
                 weekDay={week.weekDay}
                 onSaveTime={onSaveTimeHour}
                 handleDisabled={handleDisabled}

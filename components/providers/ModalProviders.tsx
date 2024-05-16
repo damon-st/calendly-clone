@@ -5,6 +5,7 @@ import RemoveAvailabilityModal from "../modals/RemoveAvailabilityModal";
 import EditLocationModal from "../modals/edit_location_modal/EditLocationModal";
 import CreateQuestionsEvent from "../modals/create-questions-event";
 import CropImageModal from "../modals/CropImageModal";
+import CreateScheduleSpecificHoursModal from "../modals/create-schedule-specific-hours/CreateScheduleSpecificHoursModal";
 
 type Props = {};
 
@@ -23,6 +24,7 @@ export default function ModalProviders({}: Props) {
       <EditLocationModal />
       <CreateQuestionsEvent />
       <CropImageModal />
+      <CreateScheduleSpecificHoursModal />
     </>
   );
 }

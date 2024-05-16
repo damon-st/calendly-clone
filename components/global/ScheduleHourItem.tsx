@@ -32,7 +32,7 @@ type Props = {
   weekDay: number;
 };
 
-export default function Hours({
+export default function ScheduleHourItem({
   hours,
   scheduleWeekDayId,
   weekDay,

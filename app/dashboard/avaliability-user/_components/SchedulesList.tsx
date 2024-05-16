@@ -12,6 +12,7 @@ import {
   Settings,
   Star,
   Trash,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import WeekDay from "./WeekDay";
@@ -28,6 +29,8 @@ import { toast } from "sonner";
 import { makeDefautlScheduleAvailability } from "@/actions/schedules";
 import CalendarCustom from "@/components/calendar/CalendarCustom";
 import ActiveEventsAvialibility from "./ActiveEventsAvialibility";
+import { useShowModal } from "@/lib/store/useShowModal";
+import ScheduleSpecificHoursItem from "./ScheduleSpecificHoursItem";
 
 type Props = {
   userId: string;
@@ -37,6 +40,7 @@ type Props = {
 type TypeView = "ListView" | "CalendarView";
 
 export default function SchedulesList({ schedules, userId }: Props) {
+  const { onOpen: onOpenModal } = useShowModal();
   const [isPending, startTransition] = useTransition();
   const [schedulesList, setSchedulesList] = useState(schedules);
   const [typeView, setTypeView] = useState<TypeView>("ListView");
@@ -161,6 +165,16 @@ export default function SchedulesList({ schedules, userId }: Props) {
       }
     });
   }, [isPending, scheduleSelect]);
+
+  const onAddDateSpecific = useCallback(() => {
+    if (!scheduleSelect) return;
+    onOpenModal("scheduleSpecifisHours", {
+      scheduleSpecific: {
+        idSchedule: scheduleSelect!.id,
+        dates: [],
+      },
+    });
+  }, [onOpenModal, scheduleSelect]);
 
   return (
     <div className="w-full mt-4">
@@ -314,10 +328,16 @@ export default function SchedulesList({ schedules, userId }: Props) {
                   Override your availability for specific dates when your hours
                   differ from your regular weekly hours.
                 </p>
-                <button className="flex gap-2 items-center text-colorTextBlack text-sm font-girloyRegular border border-colorTextBlack rounded-full w-fit px-2 py-1 hover:bg-colorGris">
+                <button
+                  onClick={onAddDateSpecific}
+                  className="flex gap-2 items-center text-colorTextBlack text-sm font-girloyRegular border border-colorTextBlack rounded-full w-fit px-2 py-1 hover:bg-colorGris"
+                >
                   <Plus />
                   <span>Add date-specific hours</span>
                 </button>
+                {scheduleSelect.scheduleSpecificHours.map((v) => (
+                  <ScheduleSpecificHoursItem item={v} key={v.id} />
+                ))}
               </div>
             </div>
           ) : (

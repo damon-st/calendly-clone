@@ -13,10 +13,13 @@ import { cn, divideArrayInParts } from "@/lib/utils";
 import { ScheduleTypeWithHours } from "@/lib/types";
 
 type Props = {
+  ignoreWeek?: boolean;
   weekHours: ScheduleTypeWithHours[];
   initialDate: Date;
   onChangeDate: (date: Date, weekDate?: ScheduleTypeWithHours) => void;
   dateSelected?: Date | null;
+  useMultipleSelect?: boolean;
+  onChangeMultiple?: (days: Date[]) => void;
 };
 
 type TypeCalerad = {
@@ -33,7 +36,11 @@ export default function CalendarSmallCustom({
   initialDate,
   onChangeDate,
   dateSelected,
+  ignoreWeek = false,
+  useMultipleSelect = false,
+  onChangeMultiple,
 }: Props) {
+  const [datesMultiples, setDatesMultiples] = useState<Date[]>([]);
   let loading = useRef(true);
   let date = useRef(initialDate);
   let year = useRef(date.current.getFullYear());
@@ -95,7 +102,12 @@ export default function CalendarSmallCustom({
       let classN = isToday ? "activeDateBook tdHoverBook " : "tdHoverBook ";
       if (i < date.current.getDate() && month.current === tempDate.getMonth()) {
         classN = "inactiveDatesBook datesNoValid";
+      } else {
+        if (ignoreWeek) {
+          classN = "datesSpecific";
+        }
       }
+
       lit.push({
         active: isToday,
         classNames: classN,
@@ -127,13 +139,15 @@ export default function CalendarSmallCustom({
         const weekDate = weekHours.find(
           (v) => v.weekDayStr === weekDays[j].title
         );
-        element = {
-          ...element,
-          weekDate,
-          classNames: `${element.classNames} ${
-            weekDate?.active ? "validDateBook" : "inactiveDatesBook"
-          }`,
-        };
+        if (!ignoreWeek) {
+          element = {
+            ...element,
+            weekDate,
+            classNames: `${element.classNames} ${
+              weekDate?.active ? "validDateBook" : "inactiveDatesBook"
+            }`,
+          };
+        }
         tempDivide[i][j] = element;
       }
     }
@@ -188,9 +202,39 @@ export default function CalendarSmallCustom({
   const onSelectDate = useCallback(
     (value: TypeCalerad) => {
       onChangeDate(value.date, value.weekDate);
+      if (!useMultipleSelect) return;
+      if (value.classNames.includes("datesSpecificSelect")) {
+        value.classNames = value.classNames.replaceAll(
+          "datesSpecificSelect",
+          ""
+        );
+        setDatesMultiples((v) => {
+          let temp = [...v];
+          temp = temp.filter((v) => v.getTime() != value.date.getTime());
+          return temp;
+        });
+      } else {
+        value.classNames = `${value.classNames} datesSpecificSelect`;
+        setDatesMultiples((v) => {
+          let temp = [...v];
+          const exitsPrev = temp.find(
+            (v) => v.getTime() === value.date.getTime()
+          );
+          if (!exitsPrev) {
+            temp.push(value.date);
+          }
+          return temp;
+        });
+      }
+      console.log("Das");
     },
-    [onChangeDate]
+    [onChangeDate, useMultipleSelect]
   );
+
+  useEffect(() => {
+    if (!useMultipleSelect) return;
+    onChangeMultiple?.(datesMultiples);
+  }, [datesMultiples, onChangeMultiple, useMultipleSelect]);
 
   return (
     <div className="w-full max-w-[400px] min-h-[40vh] relative">

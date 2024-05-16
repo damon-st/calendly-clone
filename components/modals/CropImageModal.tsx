@@ -54,6 +54,7 @@ export default function CropImageModal() {
       setLoading(false);
     }
   };
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>

@@ -7,6 +7,7 @@ import {
   ScheduleEvents,
   ScheduleHoursM,
   ScheduleM,
+  ScheduleSpecifitHours,
   ScheduleWeekdDays,
   User,
 } from "@prisma/client";
@@ -272,4 +273,8 @@ export type UserInfo = User & {
   countryInfo?: CountryInfoUser | null;
   introInfo?: IntroInfo | null;
   brandingInfo?: BrandingInfoUser | null;
+};
+
+export type TypeScheduleSpecifitHours = ScheduleSpecifitHours & {
+  hours: ScheduleHoursM[];
 };

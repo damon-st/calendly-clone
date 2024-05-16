@@ -1,19 +1,26 @@
 import { create } from "zustand";
 import { TypeInviteQuestions, TypeLocationEventNames } from "../types";
 
+type DataScheduleSpecifHour = {
+  idSchedule: string;
+  dates: Date[];
+};
+
 type Data = {
   type?: TypeLocationEventNames;
   onSaveTypeQuestion?: (type: TypeInviteQuestions) => void;
   typeInvite?: TypeInviteQuestions;
   file?: File;
   onCropImage?: (file: File) => void;
+  scheduleSpecific?: DataScheduleSpecifHour;
 };
 
 type TypeModal =
   | "none"
   | "editLocation"
   | "createQuestions"
-  | "changeImgProfile";
+  | "changeImgProfile"
+  | "scheduleSpecifisHours";
 
 type ShowModal = {
   type: TypeModal;
